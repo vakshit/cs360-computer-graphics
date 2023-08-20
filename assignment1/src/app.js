@@ -76,6 +76,47 @@ const drawBushes = (figures) => {
   );
 };
 
+const drawBirds = (figures) => {
+  // near tree
+  figures.bird(
+    mat4.scale(
+      mat4.translate(mat4.identity(mat4.create()), [0.13, 0.63, 1.0]),
+      [0.6, 0.6, 1.0]
+    )
+  );
+
+  // left to near tree
+  figures.bird(
+    mat4.scale(
+      mat4.translate(mat4.identity(mat4.create()), [-0.17, 0.7, 1.0]),
+      [0.5, 0.5, 1.0]
+    )
+  );
+
+  // right to near tree
+  figures.bird(
+    mat4.scale(
+      mat4.translate(mat4.identity(mat4.create()), [0.3, 0.8, 1.0]),
+      [0.45, 0.45, 1.0]
+    )
+  );
+
+  // above this
+  figures.bird(
+    mat4.scale(
+      mat4.translate(mat4.identity(mat4.create()), [0.02, 0.78, 1.0]),
+      [0.3, 0.3, 1.0]
+    )
+  );
+
+  figures.bird(
+    mat4.scale(
+      mat4.translate(mat4.identity(mat4.create()), [0.13, 0.82, 1.0]),
+      [0.2, 0.2, 1.0]
+    )
+  );
+};
+
 const painting = (shaderProgram, draw) => {
   /** @type {Figures} */
   const figures = new Figures(draw);
@@ -92,8 +133,10 @@ const painting = (shaderProgram, draw) => {
   drawMountains(figures);
 
   figures.sun(mat4.translate(mat4.identity(mat4.create()), [-0.7, 0.8, 1.0]));
-  figures.bird(mat4.translate(mat4.identity(mat4.create()), [-0.7, 0.8, 1.0]));
-  figures.cloud(mat4.translate(mat4.identity(mat4.create()), [-0.7, 0.8, 1.0]));
+  drawBirds(figures);
+  figures.cloud(
+    mat4.translate(mat4.identity(mat4.create()), [-0.65, 0.53, 1.0])
+  );
 
   drawTrees(figures);
 
@@ -104,6 +147,12 @@ const painting = (shaderProgram, draw) => {
   figures.boat(mat4.translate(mat4.identity(mat4.create()), [0.0, -0.05, 1.0]));
 
   drawBushes(figures);
+  figures.windmill(
+    mat4.translate(mat4.identity(mat4.create()), [0.65, 0.1, 1.0])
+  );
+  figures.windmill(
+    mat4.translate(mat4.identity(mat4.create()), [-0.5, 0.06, 1.0])
+  );
   figures.car(mat4.translate(mat4.identity(mat4.create()), [-0.52, -0.8, 1.0]));
 
   figures.home(mat4.translate(mat4.identity(mat4.create()), [-0.6, -0.5, 1.0]));

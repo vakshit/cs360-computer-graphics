@@ -13,18 +13,19 @@ class Draw {
     this.aPositionLocation = gl.getAttribLocation(shaderProgram, "aPosition");
     this.uColorLoc = gl.getUniformLocation(shaderProgram, "color");
 
-    this.circleBuf;
     this.triangleBuf;
     this.triangleIndexBuf;
-    this.circleIndexBuf;
     this.sqVertexPositionBuffer;
     this.sqVertexIndexBuffer;
+    this.circleBuf;
+    this.wingBuf;
 
     //enable the attribute arrays
     gl.enableVertexAttribArray(this.aPositionLocation);
     this.initSquareBuffer();
     this.initTriangleBuffer();
     this.initCircleBuffer();
+    this.initWingBladeBuffer();
   }
 
   initTriangleBuffer() {
@@ -84,6 +85,26 @@ class Draw {
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
     this.circleBuf.itemSize = 2;
     this.circleBuf.numItems = segments;
+  }
+
+  initWingBladeBuffer() {
+    // buffer for point locations
+    const triangleVertices = new Float32Array([
+      0.0, 0.0, -0.04, -0.22, 0.04, -0.22,
+    ]);
+    this.wingBuf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.wingBuf);
+    gl.bufferData(gl.ARRAY_BUFFER, triangleVertices, gl.STATIC_DRAW);
+    this.wingBuf.itemSize = 2;
+    this.wingBuf.numItems = 3;
+
+    // buffer for point indices
+    const triangleIndices = new Uint16Array([0, 1, 2]);
+    this.triangleIndexBuf = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.triangleIndexBuf);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, triangleIndices, gl.STATIC_DRAW);
+    this.triangleIndexBuf.itemsize = 1;
+    this.triangleIndexBuf.numItems = 3;
   }
 
   triangle(color, mMatrix) {
@@ -159,6 +180,26 @@ class Draw {
 
     // now draw the circle
     gl.drawArrays(gl.TRIANGLE_FAN, 0, this.circleBuf.numItems);
+  }
+
+  wingBlade(color, mMatrix) {
+    gl.uniformMatrix4fv(this.uMMatrixLocation, false, mMatrix);
+
+    // buffer for point locations
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.wingBuf);
+    gl.vertexAttribPointer(
+      this.aPositionLocation,
+      this.wingBuf.itemSize,
+      gl.FLOAT,
+      false,
+      0,
+      0
+    );
+
+    gl.uniform4fv(this.uColorLoc, color);
+
+    // now draw the circle
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, this.wingBuf.numItems);
   }
 
   trapezium(color, mMatrix) {

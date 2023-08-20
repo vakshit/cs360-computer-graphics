@@ -82,8 +82,59 @@ class Figures {
       mMatrix = popMatrix(stack);
     });
   }
-  bird(mMatrix) {}
-  cloud(mMatrix) {}
+
+  bird(mMatrix) {
+    const birdColor = normalizeColor([0.0, 0.0, 0.0, 1.0]);
+    const stack = [];
+
+    // body
+    pushMatrix(stack, mMatrix);
+    mMatrix = mat4.scale(mMatrix, [0.02, 0.03, 1.0]);
+    this.draw.square(birdColor, mMatrix);
+    mMatrix = popMatrix(stack);
+
+    // right wing
+    pushMatrix(stack, mMatrix);
+    mMatrix = mat4.rotateZ(mMatrix, degToRad(10));
+    mMatrix = mat4.translate(mMatrix, [0.068, 0.02, 0.0]);
+    mMatrix = mat4.scale(mMatrix, [0.12, 0.016, 1.0]);
+    this.draw.triangle(birdColor, mMatrix);
+    mMatrix = popMatrix(stack);
+
+    // left wing
+    pushMatrix(stack, mMatrix);
+    mMatrix = mat4.rotateZ(mMatrix, degToRad(-10));
+    mMatrix = mat4.translate(mMatrix, [-0.068, 0.02, 0.0]);
+    mMatrix = mat4.scale(mMatrix, [0.12, 0.016, 1.0]);
+    this.draw.triangle(birdColor, mMatrix);
+    mMatrix = popMatrix(stack);
+  }
+
+  cloud(mMatrix) {
+    const cloudColor = normalizeColor([255, 255, 255, 1.0]);
+    let stack = [];
+
+    // mid lobe
+    pushMatrix(stack, mMatrix);
+    mMatrix = mat4.scale(mMatrix, [0.15, 0.09, 1.0]);
+    this.draw.circle(cloudColor, mMatrix);
+    mMatrix = popMatrix(stack);
+
+    // left lobe
+    pushMatrix(stack, mMatrix);
+    mMatrix = mat4.translate(mMatrix, [-0.2, 0.022, 0.0]);
+    mMatrix = mat4.scale(mMatrix, [0.2, 0.11, 1.0]);
+    this.draw.circle(cloudColor, mMatrix);
+    mMatrix = popMatrix(stack);
+
+    // right lobe
+    pushMatrix(stack, mMatrix);
+    mMatrix = mat4.translate(mMatrix, [0.2, 0.0, 0.0]);
+    mMatrix = mat4.scale(mMatrix, [0.11, 0.065, 1.0]);
+    this.draw.circle(cloudColor, mMatrix);
+    popMatrix(stack);
+  }
+
   bush(mMatrix) {
     const leftColor = normalizeColor([0, 188, 0, 1.0]);
     const midColor = normalizeColor([0, 157, 0, 1.0]);
@@ -110,6 +161,7 @@ class Figures {
     this.draw.circle(midColor, mMatrix);
     mMatrix = popMatrix(stack);
   }
+
   lawn(mMatrix) {
     const lawnColor = normalizeColor([0, 255, 0, 1.0]);
     const patchColor = normalizeColor([0, 185, 41, 1.0]);
@@ -199,6 +251,35 @@ class Figures {
     mMatrix = mat4.translate(mMatrix, [-0.09, 0.05, 0.0]);
     mMatrix = mat4.scale(mMatrix, [0.005, 0.25, 1.0]);
     this.draw.square(stickColor, mMatrix);
+    mMatrix = popMatrix(stack);
+  }
+
+  windmill(mMatrix) {
+    const baseColor = normalizeColor([46, 43, 45, 1.0]);
+    const wingColor = normalizeColor([163, 180, 0, 1.0]);
+    const circleColor = normalizeColor([1, 0, 1, 1.0]);
+
+    let stack = [];
+    // pole
+    pushMatrix(stack, mMatrix);
+    mMatrix = mat4.scale(mMatrix, [0.033, 0.5, 1.0]);
+    mMatrix = mat4.translate(mMatrix, [0.0, -0.5, 0.0]);
+    this.draw.square(baseColor, mMatrix);
+    mMatrix = popMatrix(stack);
+
+    // wings
+    pushMatrix(stack, mMatrix);
+    const angles = [0, 90, 180, 270];
+    angles.forEach((angle) => {
+      mMatrix = mat4.rotateZ(mMatrix, degToRad(angle));
+      this.draw.wingBlade(wingColor, mMatrix);
+    });
+    mMatrix = popMatrix(stack);
+
+    // circle
+    pushMatrix(stack, mMatrix);
+    mMatrix = mat4.scale(mMatrix, [0.03, 0.03, 1.0]);
+    this.draw.circle(circleColor, mMatrix);
     mMatrix = popMatrix(stack);
   }
 
