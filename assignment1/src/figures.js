@@ -254,7 +254,7 @@ class Figures {
     mMatrix = popMatrix(stack);
   }
 
-  windmill(mMatrix) {
+  windmill(mMatrix, degree) {
     const baseColor = normalizeColor([46, 43, 45, 1.0]);
     const wingColor = normalizeColor([163, 180, 0, 1.0]);
     const circleColor = normalizeColor([1, 0, 1, 1.0]);
@@ -270,6 +270,7 @@ class Figures {
     // wings
     pushMatrix(stack, mMatrix);
     const angles = [0, 90, 180, 270];
+    mMatrix = mat4.rotateZ(mMatrix, degToRad(degree));
     angles.forEach((angle) => {
       mMatrix = mat4.rotateZ(mMatrix, degToRad(angle));
       this.draw.wingBlade(wingColor, mMatrix);

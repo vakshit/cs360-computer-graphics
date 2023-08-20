@@ -1,5 +1,6 @@
 /** @type {WebGLRenderingContext} */
 var gl;
+var animation;
 
 const drawMountains = (figures) => {
   // left mountain
@@ -117,12 +118,11 @@ const drawBirds = (figures) => {
   );
 };
 
-const painting = (shaderProgram, draw) => {
+const painting = (sunDegree, windmillDegree, boatTranslation, draw) => {
   /** @type {Figures} */
   const figures = new Figures(draw);
-  mMatrix = mat4.create();
 
-  matrixStack = [];
+  mMatrix = mat4.create();
   clearCanvas(gl);
 
   // initialize the model matrix to identity matrix
@@ -132,8 +132,15 @@ const painting = (shaderProgram, draw) => {
 
   drawMountains(figures);
 
-  figures.sun(mat4.translate(mat4.identity(mat4.create()), [-0.7, 0.8, 1.0]));
+  figures.sun(
+    mat4.rotateZ(
+      mat4.translate(mat4.identity(mat4.create()), [-0.7, 0.8, 1.0]),
+      degToRad(sunDegree)
+    )
+  );
+
   drawBirds(figures);
+
   figures.cloud(
     mat4.translate(mat4.identity(mat4.create()), [-0.65, 0.53, 1.0])
   );
@@ -144,18 +151,52 @@ const painting = (shaderProgram, draw) => {
 
   figures.river(mat4.create(mMatrix));
 
-  figures.boat(mat4.translate(mat4.identity(mat4.create()), [0.0, -0.05, 1.0]));
+  figures.boat(
+    mat4.translate(mat4.identity(mat4.create()), [boatTranslation, -0.05, 1.0])
+  );
 
   drawBushes(figures);
   figures.windmill(
-    mat4.translate(mat4.identity(mat4.create()), [0.65, 0.1, 1.0])
+    mat4.translate(mat4.identity(mat4.create()), [0.65, 0.1, 1.0]),
+    windmillDegree
   );
   figures.windmill(
-    mat4.translate(mat4.identity(mat4.create()), [-0.5, 0.06, 1.0])
+    mat4.translate(mat4.identity(mat4.create()), [-0.5, 0.06, 1.0]),
+    windmillDegree
   );
   figures.car(mat4.translate(mat4.identity(mat4.create()), [-0.52, -0.8, 1.0]));
 
   figures.home(mat4.translate(mat4.identity(mat4.create()), [-0.6, -0.5, 1.0]));
+};
+
+const start = (draw) => {
+  if (animation) {
+    window.cancelAnimationFrame(animation);
+  }
+  let sunDegree = 0,
+    windmillDegree = 0,
+    boatTranslation = 0,
+    direction = 1;
+
+  var animate = () => {
+    painting(sunDegree, windmillDegree, boatTranslation, draw);
+    sunDegree += 0.3;
+    windmillDegree -= 0.3;
+    if (boatTranslation > 0.8) {
+      direction = 0;
+    } else if (boatTranslation < -0.8) {
+      direction = 1;
+    }
+    if (direction) {
+      boatTranslation += 0.003;
+    } else {
+      boatTranslation -= 0.003;
+    }
+
+    animation = window.requestAnimationFrame(animate);
+  };
+
+  animate();
 };
 
 const webGLStart = () => {
@@ -163,5 +204,6 @@ const webGLStart = () => {
   const init = new Init(canvas);
   /** @type {Draw} */
   const draw = new Draw(gl, init.shaderProgram);
-  painting(init.shaderProgram, draw);
+  // painting(0, 0, 0, draw);
+  start(draw);
 };
