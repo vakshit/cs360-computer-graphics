@@ -1,5 +1,5 @@
 class Init {
-  constructor(gl, canvas) {
+  constructor(canvas) {
     this.vertexShader = null;
     this.fragmentShader = null;
     this.shaderProgram = null;

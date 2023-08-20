@@ -34,6 +34,10 @@ function degToRad(degrees) {
 
 function clearCanvas(gl) {
   gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
-  gl.clearColor(0.9, 0.9, 0.8, 1.0);
+  gl.clearColor(0.99, 0.99, 0.99, 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+}
+
+function normalizeColor(color) {
+  return [color[0] / 255, color[1] / 255, color[2] / 255, color[3]];
 }

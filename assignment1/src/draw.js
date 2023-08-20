@@ -22,6 +22,29 @@ class Draw {
 
     //enable the attribute arrays
     gl.enableVertexAttribArray(this.aPositionLocation);
+    this.initSquareBuffer();
+    this.initTriangleBuffer();
+    this.initCircleBuffer();
+  }
+
+  initTriangleBuffer() {
+    // buffer for point locations
+    const triangleVertices = new Float32Array([
+      0.0, 0.5, -0.5, -0.5, 0.5, -0.5,
+    ]);
+    this.triangleBuf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.triangleBuf);
+    gl.bufferData(gl.ARRAY_BUFFER, triangleVertices, gl.STATIC_DRAW);
+    this.triangleBuf.itemSize = 2;
+    this.triangleBuf.numItems = 3;
+
+    // buffer for point indices
+    const triangleIndices = new Uint16Array([0, 1, 2]);
+    this.triangleIndexBuf = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.triangleIndexBuf);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, triangleIndices, gl.STATIC_DRAW);
+    this.triangleIndexBuf.itemsize = 1;
+    this.triangleIndexBuf.numItems = 3;
   }
 
   initSquareBuffer() {
@@ -44,24 +67,51 @@ class Draw {
     this.sqVertexIndexBuffer.numItems = 6;
   }
 
-  initTriangleBuffer() {
+  initCircleBuffer() {
+    // Define circle vertices
+    const radius = 1;
+    const segments = 100;
+    const vertices = [];
+    for (let i = 0; i < segments; i++) {
+      const angle = (i / segments) * 2 * Math.PI;
+      const x = radius * Math.cos(angle);
+      const y = radius * Math.sin(angle);
+      vertices.push(x, y);
+    }
+
+    this.circleBuf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.circleBuf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+    this.circleBuf.itemSize = 2;
+    this.circleBuf.numItems = segments;
+  }
+
+  triangle(color, mMatrix) {
+    gl.uniformMatrix4fv(this.uMMatrixLocation, false, mMatrix);
+
     // buffer for point locations
-    const triangleVertices = new Float32Array([
-      0.0, 0.5, -0.5, -0.5, 0.5, -0.5,
-    ]);
-    this.triangleBuf = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, this.triangleBuf);
-    gl.bufferData(gl.ARRAY_BUFFER, triangleVertices, gl.STATIC_DRAW);
-    this.triangleBuf.itemSize = 2;
-    this.triangleBuf.numItems = 3;
+    gl.vertexAttribPointer(
+      this.aPositionLocation,
+      this.triangleBuf.itemSize,
+      gl.FLOAT,
+      false,
+      0,
+      0
+    );
 
     // buffer for point indices
-    const triangleIndices = new Uint16Array([0, 1, 2]);
-    this.triangleIndexBuf = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.triangleIndexBuf);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, triangleIndices, gl.STATIC_DRAW);
-    this.triangleIndexBuf.itemsize = 1;
-    this.triangleIndexBuf.numItems = 3;
+
+    gl.uniform4fv(this.uColorLoc, color);
+
+    // now draw the square
+    gl.drawElements(
+      gl.TRIANGLES,
+      this.triangleIndexBuf.numItems,
+      gl.UNSIGNED_SHORT,
+      0
+    );
   }
 
   square(color, mMatrix) {
@@ -91,31 +141,47 @@ class Draw {
     );
   }
 
-  triangle(color, mMatrix) {
+  circle(color, mMatrix) {
     gl.uniformMatrix4fv(this.uMMatrixLocation, false, mMatrix);
 
     // buffer for point locations
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.triangleBuf);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.circleBuf);
     gl.vertexAttribPointer(
       this.aPositionLocation,
-      this.triangleBuf.itemSize,
+      this.circleBuf.itemSize,
       gl.FLOAT,
       false,
       0,
       0
     );
 
-    // buffer for point indices
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.triangleIndexBuf);
-
     gl.uniform4fv(this.uColorLoc, color);
 
-    // now draw the square
-    gl.drawElements(
-      gl.TRIANGLES,
-      this.triangleIndexBuf.numItems,
-      gl.UNSIGNED_SHORT,
-      0
-    );
+    // now draw the circle
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, this.circleBuf.numItems);
+  }
+
+  trapezium(color, mMatrix) {
+    let stack = [];
+    // roof square
+    pushMatrix(stack, mMatrix);
+    mMatrix = mat4.translate(mMatrix, [0.0, 0.21, 0.0]);
+    mMatrix = mat4.scale(mMatrix, [0.4, 0.205, 1.0]);
+    this.square(color, mMatrix);
+    mMatrix = popMatrix(stack);
+
+    // roof right triangle
+    pushMatrix(stack, mMatrix);
+    mMatrix = mat4.translate(mMatrix, [0.2, 0.21, 0.0]);
+    mMatrix = mat4.scale(mMatrix, [0.2, 0.205, 1.0]);
+    this.triangle(color, mMatrix);
+    mMatrix = popMatrix(stack);
+
+    // roof left triangle
+    pushMatrix(stack, mMatrix);
+    mMatrix = mat4.translate(mMatrix, [-0.2, 0.21, 0.0]);
+    mMatrix = mat4.scale(mMatrix, [0.2, 0.205, 1.0]);
+    this.triangle(color, mMatrix);
+    mMatrix = popMatrix(stack);
   }
 }
