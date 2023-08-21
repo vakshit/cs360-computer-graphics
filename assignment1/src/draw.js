@@ -1,5 +1,5 @@
 class Draw {
-  constructor(gl, shaderProgram) {
+  constructor(gl, shaderProgram, type) {
     this.shaderProgram = shaderProgram;
 
     this.animation;
@@ -128,7 +128,7 @@ class Draw {
 
     // now draw the square
     gl.drawElements(
-      gl.TRIANGLES,
+      window.type,
       this.triangleIndexBuf.numItems,
       gl.UNSIGNED_SHORT,
       0
@@ -155,7 +155,7 @@ class Draw {
 
     // now draw the square
     gl.drawElements(
-      gl.TRIANGLES,
+      window.type,
       this.sqVertexIndexBuffer.numItems,
       gl.UNSIGNED_SHORT,
       0
@@ -179,7 +179,9 @@ class Draw {
     gl.uniform4fv(this.uColorLoc, color);
 
     // now draw the circle
-    gl.drawArrays(gl.TRIANGLE_FAN, 0, this.circleBuf.numItems);
+    let circleType =
+      window.type == gl.TRIANGLES ? gl.TRIANGLE_FAN : window.type;
+    gl.drawArrays(circleType, 0, this.circleBuf.numItems);
   }
 
   wingBlade(color, mMatrix) {
@@ -199,7 +201,8 @@ class Draw {
     gl.uniform4fv(this.uColorLoc, color);
 
     // now draw the circle
-    gl.drawArrays(gl.TRIANGLE_FAN, 0, this.wingBuf.numItems);
+    let wingType = window.type == gl.TRIANGLES ? gl.TRIANGLE_FAN : window.type;
+    gl.drawArrays(wingType, 0, this.wingBuf.numItems);
   }
 
   trapezium(color, mMatrix) {

@@ -1,6 +1,7 @@
 /** @type {WebGLRenderingContext} */
 var gl;
 var animation;
+window.type;
 
 const drawMountains = (figures) => {
   // left mountain
@@ -199,11 +200,22 @@ const start = (draw) => {
   animate();
 };
 
+const toggleType = (draw_type) => {
+  if (draw_type === "point") {
+    window.type = gl.POINTS;
+  } else if (draw_type === "line") {
+    window.type = gl.LINE_LOOP;
+  } else if (draw_type === "fill") {
+    window.type = gl.TRIANGLES;
+  }
+};
+
 const webGLStart = () => {
   var canvas = document.getElementById("canvas");
   const init = new Init(canvas);
+  window.type = gl.POINTS;
+
   /** @type {Draw} */
   const draw = new Draw(gl, init.shaderProgram);
-  // painting(0, 0, 0, draw);
   start(draw);
 };
