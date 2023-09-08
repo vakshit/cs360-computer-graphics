@@ -1,8 +1,8 @@
 class Polygons extends Buffer {
-  constructor(canvas, drawMode, vertexShaderCode, fragShaderCode) {
+  constructor(canvas, vertexShaderCode, fragShaderCode) {
     super(canvas, vertexShaderCode, fragShaderCode);
 
-    this.drawMode = drawMode;
+    // this.drawMode = drawMode;
   }
 
   _draw(buffer, mMatrix, vMatrix, pMatrix, color) {
@@ -21,11 +21,7 @@ class Polygons extends Buffer {
     this.gl.uniformMatrix4fv(this.uVMatrixLocation, false, vMatrix);
     this.gl.uniformMatrix4fv(this.uPMatrixLocation, false, pMatrix);
     this.gl.drawElements(
-      this.drawMode === 1
-        ? this.gl.POINTS
-        : this.drawMode === 2
-        ? this.gl.LINE_LOOP
-        : this.gl.TRIANGLES,
+      this.gl.LINE_LOOP,
       buffer.index.numItems,
       this.gl.UNSIGNED_SHORT,
       0

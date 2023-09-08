@@ -1,9 +1,11 @@
 class Viewport extends Figures {
-  constructor(canvas, drawMode, baseColour, vertexShaderCode, fragShaderCode) {
-    super(canvas, drawMode, baseColour, vertexShaderCode, fragShaderCode);
+  constructor(id, baseColour, vertexShaderCode, fragShaderCode) {
+    const canvas = document.getElementById(`canvas${id}`);
+    super(canvas, baseColour, vertexShaderCode, fragShaderCode);
+    this.id = id;
     this.degreeX = 0;
     this.degreeY = 0;
-    this.canvas1(0, 0);
+    this.render(0, 0);
     this._addEventListeners(canvas);
   }
 
@@ -11,6 +13,8 @@ class Viewport extends Figures {
     let isDragging = false;
     let lastX = 0;
     let lastY = 0;
+    let deltaX = 0;
+    let deltaY = 0;
 
     // Mouse event listeners
     canvas.addEventListener("mousedown", (e) => {
@@ -21,30 +25,31 @@ class Viewport extends Figures {
 
     canvas.addEventListener("mouseup", () => {
       isDragging = false;
+      this.degreeX += deltaX;
+      this.degreeY += deltaY;
     });
 
     canvas.addEventListener("mousemove", (e) => {
       if (!isDragging) return;
-      // console.log("moving");
       const newX = e.clientX;
       const newY = e.clientY;
-      // console.log(newX, newY);
-      // console.log(lastX, lastY);
-      const deltaX = newX - lastX;
-      const deltaY = newY - lastY;
-      this.degreeX += deltaX;
-      this.degreeY += deltaY;
-      // console.log(this.deltaX, this.deltaY);
 
-      // // Rotate the object based on mouse movement
-      // const rotationAngle = deltaX * 0.01; // Adjust the rotation speed as needed
-      // mat4.rotateY(rotationMatrix, rotationMatrix, rotationAngle);
+      deltaX = newX - lastX;
+      deltaY = newY - lastY;
 
-      // // Render the object with the new rotation
-      // render();
-      this.canvas1(this.degreeX * 0.1, this.degreeY * 0.1);
-      // lastX = newX;
-      // lastY = newY;
+      this.render((this.degreeX + deltaX) * 0.2, (this.degreeY + deltaY) * 0.2);
     });
+  }
+
+  render(degreeX, degreeY) {
+    if (this.id === 1) {
+      this.canvas1(degreeX, degreeY);
+    }
+    if (this.id === 2) {
+      this.canvas2(degreeX, degreeY);
+    }
+    if (this.id === 3) {
+      this.canvas2(degreeX, degreeY);
+    }
   }
 }
