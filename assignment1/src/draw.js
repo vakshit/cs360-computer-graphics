@@ -71,7 +71,7 @@ class Draw {
   initCircleBuffer() {
     // Define circle vertices
     const radius = 1;
-    const segments = 100;
+    const segments = 30;
     const vertices = [];
     for (let i = 0; i < segments; i++) {
       const angle = (i / segments) * 2 * Math.PI;

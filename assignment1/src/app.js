@@ -182,16 +182,16 @@ const start = (draw) => {
   var animate = () => {
     painting(sunDegree, windmillDegree, boatTranslation, draw);
     sunDegree += 0.3;
-    windmillDegree -= 0.3;
+    windmillDegree -= 1;
     if (boatTranslation > 0.8) {
       direction = 0;
     } else if (boatTranslation < -0.8) {
       direction = 1;
     }
     if (direction) {
-      boatTranslation += 0.003;
+      boatTranslation += 0.001;
     } else {
-      boatTranslation -= 0.003;
+      boatTranslation -= 0.001;
     }
 
     animation = window.requestAnimationFrame(animate);
