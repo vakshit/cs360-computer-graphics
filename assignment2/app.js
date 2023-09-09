@@ -355,7 +355,7 @@ function drawSphere(color, shaderProgram) {
 
 //////////////////////////////////////////////////////////////////////
 //Main drawing routine
-function drawView1() {
+function drawView1(shaderProgram) {
   const cubeColor = normalizeColor([171, 170, 132, 255]);
   const sphereColor = normalizeColor([54, 105, 224, 255]);
   mat4.identity(mMatrix);
@@ -375,7 +375,7 @@ function drawView1() {
     mat4.scale(mMatrix, [0.55, 1, 0.55]);
 
     // Now draw the cube
-    drawCube(cubeColor, shaderProgram1);
+    drawCube(cubeColor, shaderProgram);
 
     mMatrix = popMatrix(matrixStack);
   }
@@ -384,12 +384,12 @@ function drawView1() {
     pushMatrix(matrixStack, mMatrix);
     mat4.translate(mMatrix, [0, 0.55, 0]);
     mat4.scale(mMatrix, [0.4, 0.4, 0.4]);
-    drawSphere(sphereColor, shaderProgram1);
+    drawSphere(sphereColor, shaderProgram);
     mMatrix = popMatrix(matrixStack);
   }
 }
 
-function drawView2() {
+function drawView2(shaderProgram) {
   const cubeColor = normalizeColor([62, 145, 41, 255]);
   const sphereColor = normalizeColor([171, 178, 184, 255]);
   let stack = [];
@@ -408,7 +408,7 @@ function drawView2() {
     pushMatrix(stack, mMatrix);
     mat4.translate(mMatrix, [0, -0.5, 0]);
     mat4.scale(mMatrix, [0.7, 0.7, 0.7]);
-    drawSphere(sphereColor, shaderProgram2);
+    drawSphere(sphereColor, shaderProgram);
     mMatrix = popMatrix(stack);
   }
 
@@ -418,7 +418,7 @@ function drawView2() {
     mat4.translate(mMatrix, [-0.48, -0.4, 0]);
     mat4.scale(mMatrix, [0.48, 0.48, 0.48]);
 
-    drawCube(cubeColor, shaderProgram2);
+    drawCube(cubeColor, shaderProgram);
     mMatrix = popMatrix(stack);
   }
 
@@ -428,7 +428,7 @@ function drawView2() {
     mat4.translate(mMatrix, [-0.48, 0.1, 0]);
     mat4.scale(mMatrix, [0.4, 0.4, 0.4]);
 
-    drawSphere(sphereColor, shaderProgram2);
+    drawSphere(sphereColor, shaderProgram);
     mMatrix = popMatrix(stack);
   }
 
@@ -441,25 +441,21 @@ function drawView2() {
     pushMatrix(stack, mMatrix);
     mat4.scale(mMatrix, [0.35, 0.35, 0.35]);
 
-    drawCube(cubeColor, shaderProgram2);
+    drawCube(cubeColor, shaderProgram);
     mMatrix = popMatrix(stack);
   }
 
   {
-    // mat4.rotateZ(mMatrix, degToRad(30));
-    // mat4.rotateY(mMatrix, degToRad(10));
-
-    // mat4.translate(mMatrix, [0.25, 0.4, -0.2]);
     pushMatrix(stack, mMatrix);
     mat4.translate(mMatrix, [0.0, 0.35, 0]);
     mat4.scale(mMatrix, [0.25, 0.25, 0.25]);
 
-    drawSphere(sphereColor, shaderProgram2);
+    drawSphere(sphereColor, shaderProgram);
     mMatrix = popMatrix(stack);
   }
 }
 
-function drawView3() {
+function drawView3(shaderProgram) {
   const cubeColor = normalizeColor([171, 170, 132, 255]);
   const sphereColor = normalizeColor([54, 105, 224, 255]);
   let stack = [];
@@ -479,7 +475,7 @@ function drawView3() {
     mat4.translate(mMatrix, [0, -0.7, 0]);
     pushMatrix(stack, mMatrix);
     mat4.scale(mMatrix, [0.4, 0.4, 0.4]);
-    drawSphere(normalizeColor([10, 166, 47, 255]), shaderProgram3);
+    drawSphere(normalizeColor([10, 166, 47, 255]), shaderProgram);
     mMatrix = popMatrix(stack);
   }
 
@@ -490,7 +486,7 @@ function drawView3() {
   {
     pushMatrix(stack, mMatrix);
     mat4.scale(mMatrix, [1.5, 0.05, 0.4]);
-    drawCube(normalizeColor([163, 31, 5, 255]), shaderProgram3);
+    drawCube(normalizeColor([163, 31, 5, 255]), shaderProgram);
     mMatrix = popMatrix(stack);
   }
 
@@ -502,7 +498,7 @@ function drawView3() {
     pushMatrix(stack, mMatrix);
     mat4.translate(mMatrix, [0.4, 0.0, 0.0]);
     mat4.scale(mMatrix, [0.35, 0.35, 0.35]);
-    drawSphere(normalizeColor([3, 126, 163, 255]), shaderProgram3);
+    drawSphere(normalizeColor([3, 126, 163, 255]), shaderProgram);
     mMatrix = popMatrix(stack);
   }
 
@@ -511,7 +507,7 @@ function drawView3() {
     pushMatrix(stack, mMatrix);
     mat4.translate(mMatrix, [-0.4, 0.0, 0.0]);
     mat4.scale(mMatrix, [0.35, 0.35, 0.35]);
-    drawSphere(normalizeColor([85, 77, 201, 255]), shaderProgram3);
+    drawSphere(normalizeColor([85, 77, 201, 255]), shaderProgram);
     mMatrix = popMatrix(stack);
   }
 
@@ -523,7 +519,7 @@ function drawView3() {
     pushMatrix(stack, mMatrix);
     mat4.translate(mMatrix, [-0.4, 0, 0]);
     mat4.scale(mMatrix, [0.4, 0.05, 1]);
-    drawCube(normalizeColor([163, 149, 69, 255]), shaderProgram3);
+    drawCube(normalizeColor([163, 149, 69, 255]), shaderProgram);
     mMatrix = popMatrix(stack);
   }
 
@@ -532,7 +528,7 @@ function drawView3() {
     pushMatrix(stack, mMatrix);
     mat4.translate(mMatrix, [0.4, 0, 0]);
     mat4.scale(mMatrix, [0.4, 0.05, 1]);
-    drawCube(normalizeColor([49, 148, 146, 255]), shaderProgram3);
+    drawCube(normalizeColor([49, 148, 146, 255]), shaderProgram);
     mMatrix = popMatrix(stack);
   }
 
@@ -544,7 +540,7 @@ function drawView3() {
     pushMatrix(stack, mMatrix);
     mat4.translate(mMatrix, [0.4, 0.0, 0.0]);
     mat4.scale(mMatrix, [0.35, 0.35, 0.35]);
-    drawSphere(normalizeColor([184, 146, 44, 255]), shaderProgram3);
+    drawSphere(normalizeColor([184, 146, 44, 255]), shaderProgram);
     mMatrix = popMatrix(stack);
   }
 
@@ -553,7 +549,7 @@ function drawView3() {
     pushMatrix(stack, mMatrix);
     mat4.translate(mMatrix, [-0.4, 0.0, 0.0]);
     mat4.scale(mMatrix, [0.35, 0.35, 0.35]);
-    drawSphere(normalizeColor([159, 32, 168, 255]), shaderProgram3);
+    drawSphere(normalizeColor([159, 32, 168, 255]), shaderProgram);
     mMatrix = popMatrix(stack);
   }
 
@@ -564,7 +560,7 @@ function drawView3() {
   {
     pushMatrix(stack, mMatrix);
     mat4.scale(mMatrix, [1.5, 0.05, 0.4]);
-    drawCube(normalizeColor([163, 31, 5, 255]), shaderProgram3);
+    drawCube(normalizeColor([163, 31, 5, 255]), shaderProgram);
     mMatrix = popMatrix(stack);
   }
 
@@ -575,7 +571,7 @@ function drawView3() {
   {
     pushMatrix(stack, mMatrix);
     mat4.scale(mMatrix, [0.4, 0.4, 0.4]);
-    drawSphere(normalizeColor([138, 150, 158, 255]), shaderProgram3);
+    drawSphere(normalizeColor([138, 150, 158, 255]), shaderProgram);
     mMatrix = popMatrix(stack);
   }
 }
@@ -675,7 +671,7 @@ function drawView() {
   gl.useProgram(shaderProgram1.program);
   gl.enableVertexAttribArray(shaderProgram1.aPositionLocation);
   gl.enableVertexAttribArray(shaderProgram1.aNormalLocation);
-  drawView1();
+  drawView1(shaderProgram1);
 
   gl.scissor(400, 0, 400, 400);
   gl.viewport(400, 0, 400, 400);
@@ -684,7 +680,7 @@ function drawView() {
   gl.useProgram(shaderProgram2.program);
   gl.enableVertexAttribArray(shaderProgram2.aPositionLocation);
   gl.enableVertexAttribArray(shaderProgram2.aNormalLocation);
-  drawView2();
+  drawView2(shaderProgram2);
 
   gl.scissor(800, 0, 400, 400);
   gl.viewport(800, 0, 400, 400);
@@ -693,7 +689,7 @@ function drawView() {
   gl.useProgram(shaderProgram3.program);
   gl.enableVertexAttribArray(shaderProgram3.aPositionLocation);
   gl.enableVertexAttribArray(shaderProgram3.aNormalLocation);
-  drawView3();
+  drawView3(shaderProgram3);
 }
 
 // This is the entry point from the html
@@ -717,8 +713,8 @@ function webGLStart() {
   );
   initShaders(
     shaderProgram3,
-    window.shaders.vertexShaderCode_gouraud,
-    window.shaders.fragShaderCode_gouraud
+    window.shaders.vertexShaderCode_phong,
+    window.shaders.fragShaderCode_phong
   );
   //initialize buffers for the square
   initCubeBuffer();
