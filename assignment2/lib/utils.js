@@ -19,8 +19,8 @@ function normalizeColor(colors) {
 class Rotation {
   constructor() {
     this.isDragging = false;
-    this.degreeX = 0;
-    this.degreeY = 0;
+    this.degreeX = 150;
+    this.degreeY = 50;
     this.lastX = 0;
     this.lastY = 0;
     this.deltaX = 0;

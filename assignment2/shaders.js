@@ -93,7 +93,7 @@ window.shaders = {
       out vec3 fragPosition; // Pass the interpolated vertex position in eye space to the fragment shader
 
       uniform vec3 light;
-      vec3 L, R, V, posInEyeSpace;
+      vec3 posInEyeSpace;
 
       void main() {
         mat4 projectionModelView;
@@ -104,12 +104,6 @@ window.shaders = {
         gl_Position = projectionModelView * vec4(aPosition, 1.0);
         posInEyeSpace = vec3(uVMatrix * uMMatrix * vec4(aPosition, 1.0));
         gl_PointSize = 2.0;
-        L = normalize(vec3(uVMatrix * vec4(light, 1.0)) - posInEyeSpace);
-        R = normalize(-reflect(L, normal));
-        V = normalize(-posInEyeSpace);
-
-        fragNormal = normal; // Pass the interpolated normal to the fragment shader
-        fragPosition = posInEyeSpace; // Pass the interpolated position to the fragment shader
       }`,
 
   // Fragment shader code (modified for Phong shading)

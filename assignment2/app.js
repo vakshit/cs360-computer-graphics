@@ -665,7 +665,7 @@ function eventListeners() {
 function drawView() {
   //set up perspective projection matrix
   mat4.identity(pMatrix);
-  mat4.perspective(50 + Number(zoom), 1.0, 0.1, 1000, pMatrix);
+  mat4.perspective(60 + Number(zoom), 1.0, 0.1, 1000, pMatrix);
 
   // start drawing
   gl.scissor(0, 0, 400, 400);
