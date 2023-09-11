@@ -34,7 +34,8 @@ var canvas;
 
 // params
 var zoom = 10;
-var light = [50.0, 10.0, 5.0];
+var light = [5.0, 3.0, 5.0];
+// var light = [40, 40, 50];
 
 // shader Programs
 /** @type {ShaderProgram} */
@@ -114,9 +115,9 @@ Shaders = {
       R = normalize(-reflect(L,normal));
       V = normalize(-posInEyeSpace);
       float diffuse = max(dot(normal,L),0.0);
-      float specular = 1.0*pow(max(dot(V,R),0.0),10.0);
-      float ambient = 0.5;
-      fragColor = vec4(vec3((ambient+ diffuse + specular)*objColor),1.0);
+      float specular = 1.0*pow(max(dot(V,R),0.0),20.0);
+      float ambient = 0.4;
+      fragColor = vec4(vec3((ambient+ diffuse )*objColor ),1.0) + vec4(vec3(specular),1.0);
     }`,
 
   vertexShaderCode_gouraud: `#version 300 es
@@ -127,8 +128,10 @@ Shaders = {
     uniform mat4 uPMatrix; // projection matrix
     uniform mat4 uVMatrix; // view matrix
 
-    out vec4 fragColor;
+    // out vec4 fragColor;
+    out float specular, diffuse;
     uniform vec3 light;
+    float shininess = 30.0;
     vec3 L,R,V,posInEyeSpace;
     
     void main() {
@@ -143,23 +146,26 @@ Shaders = {
       L = normalize(vec3(uVMatrix * vec4(light, 1.0)) - posInEyeSpace);
       R = normalize(-reflect(L,normal));
       V = normalize(-posInEyeSpace);
-      float diffuse = max(dot(normal,L),0.0);
-      float specular = 1.0*pow(max(dot(V,R),0.0),10.0);
-      float ambient = 0.5;
-      fragColor = vec4(vec3((ambient+ diffuse + specular)),1.0);
+      diffuse = max(dot(normal,L),0.0);
+      specular = 1.0*pow(max(dot(V,R),0.0),shininess);
+      // fragColor = vec4(vec3((ambient+ diffuse + specular)),1.0);
     }`,
 
   // Fragment shader code
   fragShaderCode_gouraud: `#version 300 es
     precision mediump float;
     in vec4 fragColor;
+    in float specular, diffuse;
 
     out vec4 Color;
 
     uniform vec4 objColor;
 
+    float ambient = 0.3;
+
     void main() {
-      Color = fragColor*objColor;
+      Color = vec4(vec3((ambient+ diffuse)*objColor),1.0) + vec4(vec3(specular),1.0);
+      // Color = fragColor*objColor;
     }`,
 
   vertexShaderCode_phong: `#version 300 es
@@ -205,7 +211,7 @@ Shaders = {
     const vec3 ambientColor = vec3(0.4, 0.4, 0.4); // Ambient color
     const vec3 diffuseColor = vec3(1.0, 1.0, 1.0); // Diffuse color
     const vec3 specularColor = vec3(1.0, 1.0, 1.0); // Specular color
-    const float shininess = 32.0; // Shininess factor
+    const float shininess = 20.0; // Shininess factor
     
     void main() {
         // Calculate the normalized normal, light direction, and view direction
@@ -218,7 +224,7 @@ Shaders = {
     
         // Calculate the ambient, diffuse, and specular components
         vec3 ambient = ambientColor * objColor.rgb;
-        vec3 diffuse = max(dot(N, L), 0.0) * diffuseColor * objColor.rgb;
+        vec3 diffuse = max(dot(N, L), 0.0) * objColor.rgb;
         vec3 specular = pow(max(dot(R, V), 0.0), shininess) * specularColor;
     
         // Calculate the final color
@@ -527,8 +533,8 @@ function initSphere(nslices, nstacks, radius) {
 }
 
 function initSphereBuffer() {
-  var nslices = 50;
-  var nstacks = 50;
+  var nslices = 20;
+  var nstacks = 20;
   var radius = 0.65;
 
   initSphere(nslices, nstacks, radius);
