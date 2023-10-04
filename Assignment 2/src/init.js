@@ -1,8 +1,5 @@
 class Init {
   constructor(canvas, vertexShaderCode, fragShaderCode) {
-    // /** @type {WebGLRenderingContext} */
-    // this.gl = null;
-
     this.initGL(canvas);
 
     /** @type {WebGLProgram} */
@@ -90,6 +87,10 @@ class Init {
     this.uColorLocation = this.gl.getUniformLocation(
       this.shaderProgram,
       "objColor"
+    );
+    this.lightLocation = this.gl.getUniformLocation(
+      this.shaderProgram,
+      "lightLocation"
     );
     this.gl.enableVertexAttribArray(this.aPositionLocation);
   }

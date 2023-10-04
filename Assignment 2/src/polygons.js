@@ -1,8 +1,7 @@
 class Polygons extends Buffer {
-  constructor(canvas, vertexShaderCode, fragShaderCode) {
+  constructor(canvas, lightLocation, vertexShaderCode, fragShaderCode) {
     super(canvas, vertexShaderCode, fragShaderCode);
-
-    // this.drawMode = drawMode;
+    this.light = lightLocation;
   }
 
   _draw(buffer, mMatrix, vMatrix, pMatrix, color) {
@@ -16,12 +15,13 @@ class Polygons extends Buffer {
       0
     );
     this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, buffer.index);
+    this.gl.uniform3fv(this.lightLocation, this.light);
     this.gl.uniform4fv(this.uColorLocation, color);
     this.gl.uniformMatrix4fv(this.uMMatrixLocation, false, mMatrix);
     this.gl.uniformMatrix4fv(this.uVMatrixLocation, false, vMatrix);
     this.gl.uniformMatrix4fv(this.uPMatrixLocation, false, pMatrix);
     this.gl.drawElements(
-      this.gl.LINE_LOOP,
+      this.gl.TRIANGLES,
       buffer.index.numItems,
       this.gl.UNSIGNED_SHORT,
       0

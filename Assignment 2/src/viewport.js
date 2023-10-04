@@ -1,7 +1,7 @@
 class Viewport extends Figures {
-  constructor(id, baseColour, vertexShaderCode, fragShaderCode) {
+  constructor(id, baseColour, lightLocation, vertexShaderCode, fragShaderCode) {
     const canvas = document.getElementById(`canvas${id}`);
-    super(canvas, baseColour, vertexShaderCode, fragShaderCode);
+    super(canvas, baseColour, lightLocation, vertexShaderCode, fragShaderCode);
     this.id = id;
     this.degreeX = 0;
     this.degreeY = 0;
@@ -37,7 +37,10 @@ class Viewport extends Figures {
       deltaX = newX - lastX;
       deltaY = newY - lastY;
 
-      this.render((this.degreeX + deltaX) * 0.2, (this.degreeY + deltaY) * 0.2);
+      this.render(
+        -(this.degreeX + deltaX) * 0.2,
+        -(this.degreeY + deltaY) * 0.2
+      );
     });
   }
 

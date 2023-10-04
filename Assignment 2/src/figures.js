@@ -1,6 +1,12 @@
 class Figures extends Polygons {
-  constructor(canvas, baseColour, vertexShaderCode, fragShaderCode) {
-    super(canvas, vertexShaderCode, fragShaderCode);
+  constructor(
+    canvas,
+    baseColour,
+    lightLocation,
+    vertexShaderCode,
+    fragShaderCode
+  ) {
+    super(canvas, lightLocation, vertexShaderCode, fragShaderCode);
 
     this.baseColour = baseColour;
   }
@@ -10,6 +16,7 @@ class Figures extends Polygons {
 
     // initial rotation to account for drag movement
     let mMatrix = mat4.identity(mat4.create());
+    mMatrix = mat4.translate(mMatrix, [0.0, -0.3, 0.0]);
     mMatrix = mat4.rotateX(mMatrix, degToRad(degreeY));
     mMatrix = mat4.rotateY(mMatrix, degToRad(degreeX));
 
@@ -51,7 +58,7 @@ class Figures extends Polygons {
     {
       pushMatrix(stack, mMatrix);
       mMatrix = mat4.translate(mMatrix, [0.0, -0.55, 0.0]);
-      mMatrix = mat4.scale(mMatrix, [0.7, 0.7, 0.7]);
+      mMatrix = mat4.scale(mMatrix, [0.8, 0.8, 0.8]);
       this.drawSphere(
         mMatrix,
         mat4.identity(mat4.create()),
@@ -63,9 +70,9 @@ class Figures extends Polygons {
 
     {
       pushMatrix(stack, mMatrix);
-      mMatrix = mat4.translate(mMatrix, [-0.45, -0.2, 0.0]);
-      mMatrix = mat4.scale(mMatrix, [0.4, 0.4, 0.4]);
+      mMatrix = mat4.scale(mMatrix, [0.45, 0.45, 0.45]);
       mMatrix = mat4.rotate(mMatrix, degToRad(60), [0.0, 0.0, 1.0]);
+      mMatrix = mat4.translate(mMatrix, [-1.0, 0.75, 0.0]);
 
       this.drawCube(
         mMatrix,
@@ -78,13 +85,29 @@ class Figures extends Polygons {
 
     {
       pushMatrix(stack, mMatrix);
-      mMatrix = mat4.translate(mMatrix, [-0.25, 0.15, 0.0]);
-      mMatrix = mat4.scale(mMatrix, [0.35, 0.35, 0.35]);
+      mMatrix = mat4.translate(mMatrix, [-0.3, 0.15, 0.0]);
+      mMatrix = mat4.scale(mMatrix, [0.4, 0.4, 0.4]);
       this.drawSphere(
         mMatrix,
         mat4.identity(mat4.create()),
         mat4.identity(mat4.create()),
         sphereColor
+      );
+      mMatrix = popMatrix(stack);
+    }
+
+    {
+      pushMatrix(stack, mMatrix);
+      mMatrix = mat4.translate(mMatrix, [0.1, 0.4, 0.1]);
+      mMatrix = mat4.scale(mMatrix, [0.3, 0.3, 0.3]);
+      mMatrix = mat4.rotateY(mMatrix, degToRad(20));
+      mMatrix = mat4.rotateX(mMatrix, degToRad(20));
+      // mMatrix = mat4.rotate(mMatrix, degToRad(45), [0.0, 1.0, 1.0]);
+      this.drawCube(
+        mMatrix,
+        mat4.identity(mat4.create()),
+        mat4.identity(mat4.create()),
+        cubeColor
       );
     }
   }
