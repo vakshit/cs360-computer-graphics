@@ -59,7 +59,6 @@ function createGLContext(canvas) {
 
 /** Setup all shaders. */
 function setupShaders() {
-  console.log(shaderInit);
   for (prefix in shaders) {
     setupOneShader(shaders[prefix]);
     shaderInit[prefix]();
@@ -87,14 +86,18 @@ function setupOneShader(prefix) {
   gl.compileShader(vertexShader);
   gl.attachShader(oneShaderProgram, vertexShader);
   if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
-    console.log(gl.getShaderInfoLog(vertexShader));
+    console.log(
+      "Failed to setup vertex shader:" + gl.getShaderInfoLog(vertexShader)
+    );
   }
 
   gl.shaderSource(fragmentShader, prefix.fragmentShaderSource);
   gl.compileShader(fragmentShader);
   gl.attachShader(oneShaderProgram, fragmentShader);
   if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
-    console.log(gl.getShaderInfoLog(fragmentShader));
+    console.log(
+      "Failed to setup fragment shader:" + gl.getShaderInfoLog(fragmentShader)
+    );
   }
 
   gl.linkProgram(oneShaderProgram);
@@ -111,9 +114,6 @@ function setupBuffers() {
   for (prefix in shaders) {
     bufferInit[prefix]();
   }
-  // for (var i = 0; i < shaderPrefix.length; i++) {
-  //   bufferInit[shaderPrefix[i]]();
-  // }
 }
 
 /** Draw a frame by calling all draw functions. */
@@ -123,37 +123,21 @@ function draw() {
   for (prefix in shaders) {
     drawFunctions[prefix]();
   }
-  // for (var i = 0; i < shaderPrefix.length; i++) {
-  //   drawFunctions[shaderPrefix[i]]();
-  // }
 }
 
 /** Animate by calling all animate functions. */
 function animate() {
   /** Update physics and views. */
   viewUpdateMatrix();
-
-  /** Call animate functions. */
   for (prefix in shaders) {
     animateFunctions[prefix]();
   }
-  // for (var i = 0; i < shaderPrefix.length; i++) {
-  //   animateFunctions[shaderPrefix[i]]();
-  // }
 }
 
-/** Convert degree to rad.
- *  @param {float} d degree
- *  @return {float} r rad
- */
 function degToRad(d) {
   return (d * Math.PI) / 180;
 }
 
-/** Convert rad to degree.
- *  @param {float} r rad
- *  @return {float} d degree
- */
 function radToDeg(r) {
   return (r / Math.PI) * 180;
 }
@@ -164,4 +148,5 @@ function initAll() {
   skyboxInit();
   teapotInit();
   sphereInit();
+  rubiksInit();
 }

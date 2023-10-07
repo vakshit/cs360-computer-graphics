@@ -32,11 +32,19 @@ const spheres = [
     color: vec3.fromValues(32 / 255, 82 / 255, 64 / 255),
     scale: vec3.fromValues(0.1, 0.1, 0.1),
     translate: vec3.fromValues(0.3, -0.1, 0.0),
+    texture: false,
   },
   {
     color: vec3.fromValues(52 / 255, 66 / 255, 125 / 255),
     scale: vec3.fromValues(0.1, 0.1, 0.1),
     translate: vec3.fromValues(0.5, -0.1, 0.0),
+    texture: false,
+  },
+  {
+    color: vec3.fromValues(52 / 255, 66 / 255, 125 / 255),
+    scale: vec3.fromValues(0.8, 0.05, 0.6),
+    translate: vec3.fromValues(0.0, -0.3, 0.0),
+    texture: true,
   },
 ];
 
@@ -85,7 +93,7 @@ function sphereInit() {
 
   /** Initialize sphere and normal map. */
   sphereGenerateShape();
-  setupNormalMap();
+  // setupNormalMap();
 }
 
 /** Initialize sphere's shader programs and variable locations. */
@@ -206,7 +214,7 @@ function sphereBufferInit() {
 }
 
 /** Airplane draw call */
-function sphereDraw(color, scale, translate) {
+function sphereDraw() {
   /** Update lights based on interface settings. */
   vec3.scale(ambient_light, environment_ambient, lightEnable);
   vec3.scale(diffuse_light, DIFFUSE_LIGHT_INIT, lightEnable);
@@ -215,7 +223,7 @@ function sphereDraw(color, scale, translate) {
   /** Setup variables. */
   gl.useProgram(sphereShaderProgram);
 
-  spheres.forEach(({ color, scale, translate }) => {
+  spheres.forEach(({ color, scale, translate, texture }) => {
     /** Draw Sphere 1! */
     SPHERE_COLOR = color;
     SPHERE_SCALE = scale;
@@ -345,19 +353,18 @@ var radius = 1.0;
 /** Setup normal map. */
 function setupNormalMap() {
   /** Set up texture. */
-  normalTexture = gl.createTexture();
-  gl.activeTexture(gl.TEXTURE1);
-  gl.bindTexture(gl.TEXTURE_2D, normalTexture);
-
-  /** Load normal map. */
-  var img = new Image();
-  img.src = "EarthNormal.png";
-  img.onload = function () {
-    gl.activeTexture(gl.TEXTURE1);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  };
+  // normalTexture = gl.createTexture();
+  // gl.activeTexture(gl.TEXTURE1);
+  // gl.bindTexture(gl.TEXTURE_2D, normalTexture);
+  // /** Load normal map. */
+  // var img = new Image();
+  // img.src = "EarthNormal.png";
+  // img.onload = function () {
+  //   gl.activeTexture(gl.TEXTURE1);
+  //   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+  //   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  //   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  //   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  //   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  // };
 }

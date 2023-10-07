@@ -26,7 +26,7 @@ var mvMatrix = mat4.create();
 var pMatrix = mat4.create();
 
 /** Field of view */
-var VIEWPORT = 50;
+var VIEWPORT = 40;
 
 /** Initialization of view.js */
 function viewInit() {
@@ -48,7 +48,7 @@ function viewUpdateMatrix() {
   /** Update up and lookAt vector based on current angle. */
   viewOrigin = vec3.fromValues(
     VIEW_RADIUS * Math.cos(viewAngle),
-    0.0,
+    0.5,
     VIEW_RADIUS * Math.sin(viewAngle)
   );
   viewLookAt = vec3.fromValues(-Math.cos(viewAngle), 0.0, -Math.sin(viewAngle));

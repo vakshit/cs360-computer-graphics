@@ -162,7 +162,7 @@ function skyboxGenerateShape() {
 function setupCubeMap() {
   /** Set up texture. */
   skyboxTexture = gl.createTexture();
-  gl.activeTexture(gl.TEXTURE0);
+  gl.activeTexture(gl.TEXTURE0 + 0);
   gl.bindTexture(gl.TEXTURE_CUBE_MAP, skyboxTexture);
   gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
   gl.texParameteri(

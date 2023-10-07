@@ -253,5 +253,28 @@ class Shaders {
       0.0);
       }`,
     };
+
+    // this.rubiks = {
+    //   name: "rubiks",
+    //   vertexShaderSource: `#version 300 es
+    //   in vec4 aPosition;
+    //   uniform mat4 uMMatrix;
+    //   uniform mat4 uPMatrix;
+    //   uniform mat4 uMVMatrix;
+    //   out vec3 v_normal;
+    //   void main() {
+    //     gl_Position = uPMatrix * uMVMatrix * uMMatrix * aPosition;
+    //     v_normal = normalize(aPosition.xyz);
+    //   } `,
+    //   fragmentShaderSource: `#version 300 es
+    //   precision mediump float;
+    //   in vec3 v_normal;
+    //   uniform samplerCube uTexture;
+    //   out vec4 outColor;
+
+    //   void main() {
+    //     outColor = texture(uTexture, normalize(v_normal));
+    //   }`,
+    // };
   }
 }
