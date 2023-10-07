@@ -144,19 +144,18 @@ class Shaders {
     this.sphere = {
       name: "sphere",
 
-      vertexShaderSource: `
-      attribute vec3 aVertexPosition;
-      attribute vec3 aVertexNormal;
+      vertexShaderSource: `#version 300 es
+      in vec3 aVertexPosition;
+      in vec3 aVertexNormal;
 
       uniform mat4 uPMatrix;
       uniform mat4 uMVMatrix;
       uniform mat4 uModelMatrix;
 
-      varying vec3 vModelPosition;
-      varying vec3 vModelNormal;
-      varying vec3 vWorldPosition;
-      varying vec3 vWorldNormal;
-      // varying vec3 vVertexColor;
+      out vec3 vModelPosition;
+      out vec3 vModelNormal;
+      out vec3 vWorldPosition;
+      out vec3 vWorldNormal;
 
       void main(void) {
 
@@ -167,12 +166,11 @@ class Shaders {
 
       vWorldPosition = vec3(worldPosition);
       vWorldNormal = normalize(mat3(uModelMatrix) * aVertexNormal);
-      // vVertexColor = vec3(0.145, 0.321, 0.250);
 
       gl_Position = uPMatrix * uMVMatrix * worldPosition;
       }`,
 
-      fragmentShaderSource: `
+      fragmentShaderSource: `#version 300 es
       precision mediump float;
 
       const float shininess = 1000.0;
@@ -183,20 +181,17 @@ class Shaders {
       uniform vec3 uAmbientLight;
       uniform vec3 uDiffuseLight;
       uniform vec3 uSpecularLight;
+      uniform float uTextureEnable;
+      uniform sampler2D uTextureMap;
 
       uniform samplerCube uEnv;
-      uniform sampler2D uNormalMap;
-
-      uniform float uNormalEnable;
-      uniform float uReflectionEnable;
-      uniform float uBumpiness;
-
-      varying vec3 vModelPosition;
-      varying vec3 vModelNormal;
-      varying vec3 vWorldPosition;
-      varying vec3 vWorldNormal;
       uniform vec3 vVertexColor;
 
+      in vec3 vModelPosition;
+      in vec3 vWorldPosition;
+      in vec3 vWorldNormal;
+
+      out vec4 fragColor;
       void main(void) {
 
       vec3 worldPosition = vWorldPosition;
@@ -205,35 +200,11 @@ class Shaders {
       // Adjust to actual center of teapot.
       modelPosition.y -= 1.0;
       modelPosition = normalize(modelPosition);
-      vec3 modelNormal = normalize(vModelNormal);
 
       // Calculate texture coorinates.
-      vec2 textureCoord;
+      vec2 textureCoord = vec2(0.5, 0.5);
       textureCoord.s = -atan(-modelPosition.z, -modelPosition.x) / 2.0 / PI + 0.5;
       textureCoord.t = 0.5 - 0.5 * modelPosition.y;
-
-      // Calculate tangent bases in world coordinates.
-      vec3 tangentBAxis = vec3(0.0,1.0,0.0);
-      tangentBAxis = normalize(tangentBAxis - dot(tangentBAxis, worldNormal) * worldNormal);
-      vec3 tangentTAxis = normalize(cross(tangentBAxis, worldNormal));
-
-      // Load normal map.
-      vec3 targetNormal = texture2D(uNormalMap, textureCoord).rgb;
-      // Hard-coded fine tuning
-      targetNormal.r = targetNormal.r / 129.0 * 127.5;
-      targetNormal.g = targetNormal.g / 128.0 * 127.5;
-      targetNormal = normalize(targetNormal * 2.0 - 1.0);
-
-      // Increase bumpiness
-      targetNormal.r = targetNormal.r * uBumpiness;
-      targetNormal.g = targetNormal.g * uBumpiness;
-      targetNormal = normalize(targetNormal);
-
-      // Calculate new normal after adding normal map
-      targetNormal = targetNormal.r * tangentTAxis - targetNormal.g * tangentBAxis + targetNormal.b * worldNormal;
-      targetNormal = normalize(targetNormal);
-
-      worldNormal = uNormalEnable * targetNormal + (1.0 - uNormalEnable) * worldNormal;
 
       // Phong reflection model
       vec3 normalizedLightDirection = normalize(uLightDirection);
@@ -244,12 +215,16 @@ class Shaders {
       float specularLightWeighting = pow( max( dot(vectorReflection, vectorView), 0.0), shininess );
 
       // Sum up lighting and reflection parts
-      gl_FragColor =  vec4(
-      (8.0*uAmbientLight * vVertexColor)
-      + ((uDiffuseLight * vVertexColor) * diffuseLightWeighting)
-      + ( uSpecularLight * specularLightWeighting),
-      1.0 );
-      gl_FragColor += 0.4 * vec4(textureCube(uEnv, normalize(reflect(-vectorView, worldNormal))).rgb * uReflectionEnable,
+      if (uTextureEnable == 1.0){
+        fragColor = 0.5* vec4(texture(uTextureMap, textureCoord).rgb, 2.0);
+      } else {
+        fragColor =  vec4(
+        (8.0*uAmbientLight * vVertexColor)
+        + ((uDiffuseLight * vVertexColor) * diffuseLightWeighting)
+        + ( uSpecularLight * specularLightWeighting),
+        1.0 );
+      }
+      fragColor += 0.4 * vec4(texture(uEnv, normalize(reflect(-vectorView, worldNormal))).rgb,
       0.0);
       }`,
     };

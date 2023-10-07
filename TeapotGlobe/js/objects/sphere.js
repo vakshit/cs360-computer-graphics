@@ -32,19 +32,19 @@ const spheres = [
     color: vec3.fromValues(32 / 255, 82 / 255, 64 / 255),
     scale: vec3.fromValues(0.1, 0.1, 0.1),
     translate: vec3.fromValues(0.3, -0.1, 0.0),
-    texture: false,
+    texture: 0.0,
   },
   {
     color: vec3.fromValues(52 / 255, 66 / 255, 125 / 255),
     scale: vec3.fromValues(0.1, 0.1, 0.1),
     translate: vec3.fromValues(0.5, -0.1, 0.0),
-    texture: false,
+    texture: 0.0,
   },
   {
     color: vec3.fromValues(52 / 255, 66 / 255, 125 / 255),
     scale: vec3.fromValues(0.8, 0.05, 0.6),
     translate: vec3.fromValues(0.0, -0.3, 0.0),
-    texture: true,
+    texture: 1.0,
   },
 ];
 
@@ -52,12 +52,6 @@ const spheres = [
 var SPHERE_SCALE = vec3.fromValues(0.1, 0.1, 0.1);
 /** Model-to-World translation of sphere */
 var SPHERE_TRANSLATION = vec3.fromValues(0.3, -0.1, 0.0);
-
-/** Settings */
-var lightEnable = 1.0;
-var normalEnable = 1.0;
-var reflectionEnable = 1.0;
-var bumpiness = 0.0;
 
 /** Lighting parameters */
 /** Parallel light source */
@@ -93,7 +87,7 @@ function sphereInit() {
 
   /** Initialize sphere and normal map. */
   sphereGenerateShape();
-  // setupNormalMap();
+  setupTextureMap();
 }
 
 /** Initialize sphere's shader programs and variable locations. */
@@ -124,21 +118,9 @@ function sphereShaderInit() {
     "uModelMatrix"
   );
   sphereLocations["uEnv"] = gl.getUniformLocation(sphereShaderProgram, "uEnv");
-  sphereLocations["uNormalMap"] = gl.getUniformLocation(
-    sphereShaderProgram,
-    "uNormalMap"
-  );
-  sphereLocations["uNormalEnable"] = gl.getUniformLocation(
-    sphereShaderProgram,
-    "uNormalEnable"
-  );
   sphereLocations["uReflectionEnable"] = gl.getUniformLocation(
     sphereShaderProgram,
     "uReflectionEnable"
-  );
-  sphereLocations["uBumpiness"] = gl.getUniformLocation(
-    sphereShaderProgram,
-    "uBumpiness"
   );
 
   sphereLocations["uViewOrigin"] = gl.getUniformLocation(
@@ -164,6 +146,14 @@ function sphereShaderInit() {
   sphereLocations["vVertexColor"] = gl.getUniformLocation(
     sphereShaderProgram,
     "vVertexColor"
+  );
+  sphereLocations["uTextureLocation"] = gl.getUniformLocation(
+    sphereShaderProgram,
+    "uTextureMap"
+  );
+  sphereLocations["uTextureEnable"] = gl.getUniformLocation(
+    sphereShaderProgram,
+    "uTextureEnable"
   );
 }
 
@@ -267,16 +257,16 @@ function sphereDraw() {
     );
     gl.uniform3fv(sphereLocations["uViewOrigin"], viewOrigin);
     gl.uniform1i(sphereLocations["uEnv"], 0);
-    gl.uniform1i(sphereLocations["uNormalMap"], 1);
-    gl.uniform1f(sphereLocations["uNormalEnable"], normalEnable);
-    gl.uniform1f(sphereLocations["uReflectionEnable"], reflectionEnable);
-    gl.uniform1f(sphereLocations["uBumpiness"], bumpiness);
-
+    gl.uniform1f(sphereLocations["uTextureEnable"], texture);
     gl.uniform3fv(sphereLocations["uLightDirection"], LIGHT_DIRECTION);
     gl.uniform3fv(sphereLocations["uAmbientLight"], ambient_light);
     gl.uniform3fv(sphereLocations["uDiffuseLight"], diffuse_light);
     gl.uniform3fv(sphereLocations["uSpecularLight"], specular_light);
     gl.uniform3fv(sphereLocations["vVertexColor"], SPHERE_COLOR);
+
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindTexture(gl.TEXTURE_2D, sphereLocations["texture"]);
+    gl.uniform1i(sphereLocations["uTextureLocation"], 1); // Use texture unit 1
 
     gl.drawElements(
       gl.TRIANGLES,
@@ -351,20 +341,25 @@ var nslices = 50;
 var nstacks = 50;
 var radius = 1.0;
 /** Setup normal map. */
-function setupNormalMap() {
+function setupTextureMap() {
   /** Set up texture. */
-  // normalTexture = gl.createTexture();
-  // gl.activeTexture(gl.TEXTURE1);
-  // gl.bindTexture(gl.TEXTURE_2D, normalTexture);
-  // /** Load normal map. */
-  // var img = new Image();
-  // img.src = "EarthNormal.png";
-  // img.onload = function () {
-  //   gl.activeTexture(gl.TEXTURE1);
-  //   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-  //   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-  //   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-  //   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-  //   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  // };
+  sphereLocations["texture"] = gl.createTexture();
+  gl.activeTexture(gl.TEXTURE1);
+  var image = new Image();
+  image.src = "wood.jpg";
+  image.onload = function () {
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindTexture(gl.TEXTURE_2D, sphereLocations["texture"]);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+    gl.generateMipmap(gl.TEXTURE_2D);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(
+      gl.TEXTURE_2D,
+      gl.TEXTURE_MIN_FILTER,
+      gl.LINEAR_MIPMAP_LINEAR
+    );
+    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  };
 }
