@@ -148,6 +148,6 @@ function initAll() {
   skyboxInit();
   teapotInit();
   sphereInit();
-  rubiksInit();
+  // rubiksInit();
   cubeInit();
 }

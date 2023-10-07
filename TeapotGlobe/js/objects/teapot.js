@@ -28,7 +28,7 @@ var teapotQuat = quat.create();
 var teapotAngleStep = degToRad(0);
 
 /** Model-to-World scale of teapot */
-var TEAPOT_SCALE = vec3.fromValues(0.1, 0.1, 0.1);
+var TEAPOT_SCALE = vec3.fromValues(0.11, 0.11, 0.1);
 /** Model-to-World translation of teapot */
 var TEAPOT_TRANSLATION = vec3.fromValues(0.0, -0.2, 0.0);
 

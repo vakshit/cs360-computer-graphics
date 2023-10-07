@@ -4,14 +4,14 @@ var Y_AXIS = vec3.fromValues(0.0, 1.0, 0.0);
 var Z_AXIS = vec3.fromValues(0.0, 0.0, 1.0);
 
 /** Radius of camera trajectory */
-var VIEW_RADIUS = 2;
+var VIEW_RADIUS = 1.8;
 
 /** Camera position */
 var viewOrigin = vec3.fromValues(VIEW_RADIUS, 0.0, 0.0);
 /** Camera rotation angle */
-var viewAngle = 0;
+var viewAngle = 80;
 /** Camera rotation speed */
-var viewAngleStep = degToRad(0.2);
+var viewAngleStep = degToRad(0.0);
 
 /** Up vector */
 var viewUp = vec3.clone(Y_AXIS);
@@ -48,7 +48,7 @@ function viewUpdateMatrix() {
   /** Update up and lookAt vector based on current angle. */
   viewOrigin = vec3.fromValues(
     VIEW_RADIUS * Math.cos(viewAngle),
-    0.5,
+    0.6,
     VIEW_RADIUS * Math.sin(viewAngle)
   );
   viewLookAt = vec3.fromValues(-Math.cos(viewAngle), 0.0, -Math.sin(viewAngle));

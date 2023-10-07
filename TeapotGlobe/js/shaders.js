@@ -269,8 +269,9 @@ class Shaders {
       uniform vec3 uAmbientLight;
       uniform vec3 uDiffuseLight;
       uniform vec3 uSpecularLight;
-      uniform float uTextureEnable;
-      uniform sampler2D uTextureMap;
+      uniform float uShadingType;
+      uniform sampler2D uWoodTexture;
+      uniform samplerCube uRubiksTexture;
 
       uniform samplerCube uEnv;
       uniform vec3 vVertexColor;
@@ -288,56 +289,42 @@ class Shaders {
       // Adjust to actual center of teapot.
       modelPosition.y -= 1.0;
       modelPosition = normalize(modelPosition);
-
-      // Calculate texture coorinates.
-      vec2 textureCoord = vec2(0.5, 0.5);
-      textureCoord.s = -atan(-modelPosition.z, -modelPosition.x) / 2.0 / PI + 0.5;
-      textureCoord.t = 0.5 - 0.5 * modelPosition.y;
-
-      // Phong reflection model
-      vec3 normalizedLightDirection = normalize(uLightDirection);
-      vec3 vectorReflection = normalize( reflect(-normalizedLightDirection, worldNormal) );
       vec3 vectorView = normalize( uViewOrigin - worldPosition );
 
-      float diffuseLightWeighting = max( dot(worldNormal, normalizedLightDirection), 0.0 );
-      float specularLightWeighting = pow( max( dot(vectorReflection, vectorView), 0.0), shininess );
 
       // Sum up lighting and reflection parts
-      if (uTextureEnable == 1.0){
-        fragColor = 0.5* vec4(texture(uTextureMap, textureCoord).rgb, 2.0);
+      if (uShadingType == 1.0){
+        // Calculate texture coorinates.
+        vec2 textureCoord = vec2(0.5, 0.5);
+        textureCoord.s = -atan(-modelPosition.z, -modelPosition.x) / 2.0 / PI + 0.5;
+        textureCoord.t = 0.5 - 0.5 * modelPosition.y;
+        fragColor = 0.5* vec4(texture(uWoodTexture, textureCoord).rgb, 2.0);
+
+        // add reflection
+        fragColor += 0.4 * vec4(texture(uEnv, normalize(reflect(-vectorView, worldNormal))).rgb,
+        0.0);
+      } else if (uShadingType == 2.0) {
+        fragColor = vec4(texture(uRubiksTexture, normalize(vModelPosition)).rgb, 1.0);
       } else {
+        // Phong reflection model
+        vec3 normalizedLightDirection = normalize(uLightDirection);
+        vec3 vectorReflection = normalize( reflect(-normalizedLightDirection, worldNormal) );
+  
+        float diffuseLightWeighting = max( dot(worldNormal, normalizedLightDirection), 0.0 );
+        float specularLightWeighting = pow( max( dot(vectorReflection, vectorView), 0.0), shininess );  
         fragColor =  vec4(
         (8.0*uAmbientLight * vVertexColor)
         + ((uDiffuseLight * vVertexColor) * diffuseLightWeighting)
         + ( uSpecularLight * specularLightWeighting),
         1.0 );
+
+        // add reflection
+        fragColor += 0.4 * vec4(texture(uEnv, normalize(refract(-vectorView, worldNormal, 0.82))).rgb,
+        0.0);
       }
-      fragColor += 0.4 * vec4(texture(uEnv, normalize(reflect(-vectorView, worldNormal))).rgb,
-      0.0);
+      // always reflects
+      
       }`,
     };
-
-    // this.rubiks = {
-    //   name: "rubiks",
-    //   vertexShaderSource: `#version 300 es
-    //   in vec4 aPosition;
-    //   uniform mat4 uMMatrix;
-    //   uniform mat4 uPMatrix;
-    //   uniform mat4 uMVMatrix;
-    //   out vec3 v_normal;
-    //   void main() {
-    //     gl_Position = uPMatrix * uMVMatrix * uMMatrix * aPosition;
-    //     v_normal = normalize(aPosition.xyz);
-    //   } `,
-    //   fragmentShaderSource: `#version 300 es
-    //   precision mediump float;
-    //   in vec3 v_normal;
-    //   uniform samplerCube uTexture;
-    //   out vec4 outColor;
-
-    //   void main() {
-    //     outColor = texture(uTexture, normalize(v_normal));
-    //   }`,
-    // };
   }
 }

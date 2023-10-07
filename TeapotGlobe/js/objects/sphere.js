@@ -17,7 +17,6 @@ var sphereShaderProgram;
 var sphereLocations = {};
 /** Texture of normal map. */
 var normalTexture;
-
 /** Model-to-world matrix of the sphere. */
 var sphereModelMatrix = mat4.create();
 /** Rotation angle of sphere. */
@@ -30,19 +29,19 @@ var sphereAngleStep = degToRad(-0.5);
 const spheres = [
   {
     color: vec3.fromValues(32 / 255, 82 / 255, 64 / 255),
-    scale: vec3.fromValues(0.1, 0.1, 0.1),
-    translate: vec3.fromValues(0.3, -0.1, 0.0),
+    scale: vec3.fromValues(0.08, 0.08, 0.08),
+    translate: vec3.fromValues(0.05, -0.1, -0.5),
     texture: 0.0,
   },
   {
     color: vec3.fromValues(52 / 255, 66 / 255, 125 / 255),
-    scale: vec3.fromValues(0.1, 0.1, 0.1),
-    translate: vec3.fromValues(0.5, -0.1, 0.0),
+    scale: vec3.fromValues(0.06, 0.06, 0.06),
+    translate: vec3.fromValues(-0.3, -0.1, -0.25),
     texture: 0.0,
   },
   {
     color: vec3.fromValues(52 / 255, 66 / 255, 125 / 255),
-    scale: vec3.fromValues(0.8, 0.05, 0.6),
+    scale: vec3.fromValues(0.8, 0.01, 0.6),
     translate: vec3.fromValues(0.0, -0.3, 0.0),
     texture: 1.0,
   },
@@ -202,9 +201,9 @@ function sphereBufferInit() {
 /** Airplane draw call */
 function sphereDraw() {
   /** Update lights based on interface settings. */
-  vec3.scale(ambient_light, environment_ambient, lightEnable);
-  vec3.scale(diffuse_light, DIFFUSE_LIGHT_INIT, lightEnable);
-  vec3.scale(specular_light, SPECULAR_LIGHT_INIT, lightEnable);
+  vec3.scale(ambient_light, environment_ambient, 1.0);
+  vec3.scale(diffuse_light, DIFFUSE_LIGHT_INIT, 1.0);
+  vec3.scale(specular_light, SPECULAR_LIGHT_INIT, 1.0);
 
   /** Setup variables. */
   gl.useProgram(sphereShaderProgram);

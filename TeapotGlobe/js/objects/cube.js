@@ -15,10 +15,9 @@ var normalTexture;
 var cubeModelMatrix = mat4.create();
 var cubeAngle = degToRad(200);
 var cubeQuat = quat.create();
+
 var cubeAngleStep = degToRad(-0.5);
 
-var CUBE_SCALE = vec3.fromValues(0.1, 0.5, 0.1);
-var CUBE_TRANSLATION = vec3.fromValues(0.5, -0.6, -0.2);
 var LIGHT_DIRECTION = vec3.fromValues(
   -Math.cos(degToRad(40)),
   Math.sin(degToRad(40)),
@@ -26,7 +25,7 @@ var LIGHT_DIRECTION = vec3.fromValues(
 );
 var ENV_AMBIENT_LIGHT_ON = vec3.fromValues(0.08, 0.08, 0.08);
 var ENV_AMBIENT_LIGHT_OFF = vec3.fromValues(0.8, 0.8, 0.8);
-var CUBE_COLOR = vec3.fromValues(32 / 255, 82 / 255, 64 / 255);
+var CUBE_COLOR = vec3.fromValues(194 / 255, 187 / 255, 169 / 255);
 var DIFFUSE_LIGHT_INIT = vec3.clone(CUBE_COLOR);
 var SPECULAR_LIGHT_INIT = vec3.fromValues(1.0, 1.0, 1.0);
 
@@ -37,24 +36,34 @@ var specular_light = vec3.clone(SPECULAR_LIGHT_INIT);
 
 const cubes = [
   {
+    scale: vec3.fromValues(0.1, 0.5, 0.1),
     translate: vec3.fromValues(0.5, -0.6, -0.2),
-    textureEnabled: 1.0,
-    textureNumber: 1,
+    textureNumber: 1.0,
   },
   {
+    scale: vec3.fromValues(0.1, 0.5, 0.1),
     translate: vec3.fromValues(-0.5, -0.6, -0.2),
-    textureEnabled: 1.0,
-    textureNumber: 1,
+    textureNumber: 1.0,
   },
   {
+    scale: vec3.fromValues(0.1, 0.5, 0.1),
     translate: vec3.fromValues(-0.5, -0.6, 0.2),
-    textureEnabled: 1.0,
-    textureNumber: 1,
+    textureNumber: 1.0,
   },
   {
+    scale: vec3.fromValues(0.1, 0.5, 0.1),
     translate: vec3.fromValues(0.5, -0.6, 0.2),
-    textureEnabled: 1.0,
-    textureNumber: 1,
+    textureNumber: 1.0,
+  },
+  {
+    scale: vec3.fromValues(0.1, 0.1, 0.1),
+    translate: vec3.fromValues(-0.15, -0.1, -0.5),
+    textureNumber: 2.0,
+  },
+  {
+    scale: vec3.fromValues(0.15, 0.25, 0.15),
+    translate: vec3.fromValues(0.35, -0.1, -0.3),
+    textureNumber: 3.0,
   },
 ];
 
@@ -65,6 +74,8 @@ function cubeInit() {
   bufferInit[CUBE_PREFIX] = cubeBufferInit;
   drawFunctions[CUBE_PREFIX] = cubeDraw;
   animateFunctions[CUBE_PREFIX] = cubeAnimate;
+
+  setupRubiksTextureMap();
 }
 
 function cubeShaderInit() {
@@ -119,13 +130,17 @@ function cubeShaderInit() {
     cubeShaderProgram,
     "vVertexColor"
   );
-  cubeLocations["uTextureLocation"] = gl.getUniformLocation(
+  cubeLocations["uWood"] = gl.getUniformLocation(
     cubeShaderProgram,
-    "uTextureMap"
+    "uWoodTexture"
   );
-  cubeLocations["uTextureEnable"] = gl.getUniformLocation(
+  cubeLocations["uShadingType"] = gl.getUniformLocation(
     cubeShaderProgram,
-    "uTextureEnable"
+    "uShadingType"
+  );
+  cubeLocations["uRubiksTexture"] = gl.getUniformLocation(
+    cubeShaderProgram,
+    "uRubiksTexture"
   );
 }
 
@@ -227,7 +242,7 @@ function cubeDraw() {
       cubeModelMatrix,
       cubeQuat,
       cube.translate,
-      CUBE_SCALE
+      cube.scale
     );
     gl.bindBuffer(gl.ARRAY_BUFFER, cubePositionBuffer);
     gl.enableVertexAttribArray(cubeLocations["aVertexPosition"]);
@@ -257,14 +272,15 @@ function cubeDraw() {
     gl.uniformMatrix4fv(cubeLocations["uModelMatrix"], false, cubeModelMatrix);
     gl.uniform3fv(cubeLocations["uViewOrigin"], viewOrigin);
     gl.uniform1i(cubeLocations["uEnv"], 0);
-    gl.uniform1f(cubeLocations["uTextureEnable"], cube.textureEnabled);
+    gl.uniform1f(cubeLocations["uShadingType"], cube.textureNumber);
     gl.uniform3fv(cubeLocations["uLightDirection"], LIGHT_DIRECTION);
     gl.uniform3fv(cubeLocations["uAmbientLight"], ambient_light);
     gl.uniform3fv(cubeLocations["uDiffuseLight"], diffuse_light);
     gl.uniform3fv(cubeLocations["uSpecularLight"], specular_light);
     gl.uniform3fv(cubeLocations["vVertexColor"], CUBE_COLOR);
 
-    gl.uniform1i(cubeLocations["uTextureLocation"], cube.textureNumber); // Use texture unit 1
+    gl.uniform1i(cubeLocations["uWood"], 1); // Use texture unit 1
+    gl.uniform1i(cubeLocations["uRubiksTexture"], 2);
 
     gl.drawElements(
       gl.TRIANGLES,
@@ -280,3 +296,59 @@ function cubeDraw() {
 }
 
 function cubeAnimate() {}
+
+function setupRubiksTextureMap() {
+  // Create a texture.
+  cubeLocations["rubiksTexture"] = gl.createTexture();
+
+  // use texture unit 0
+  gl.activeTexture(gl.TEXTURE2);
+  gl.bindTexture(gl.TEXTURE_CUBE_MAP, cubeLocations["rubiksTexture"]);
+  gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(
+    gl.TEXTURE_CUBE_MAP,
+    gl.TEXTURE_MIN_FILTER,
+    gl.LINEAR_MIPMAP_LINEAR
+  );
+
+  const faceInfos = [
+    gl.TEXTURE_CUBE_MAP_POSITIVE_X,
+    gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
+    gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
+    gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,
+    gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
+    gl.TEXTURE_CUBE_MAP_NEGATIVE_Z,
+  ];
+  var img = new Image();
+  img.src = "rcube.png";
+  img.onload = function () {
+    faceInfos.forEach((face, index) => {
+      gl.activeTexture(gl.TEXTURE2);
+
+      gl.texImage2D(face, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+      if (index == 5) {
+        gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
+      }
+    });
+  };
+}
+
+// function setupRubiksTextureMap() {
+//   /** Set up texture. */
+//   cubeLocations["rubiksTexture"] = gl.createTexture();
+//   gl.activeTexture(gl.TEXTURE2);
+//   var image = new Image();
+//   image.src = "wood.jpg";
+//   image.onload = function () {
+//     gl.activeTexture(gl.TEXTURE2);
+//     gl.bindTexture(gl.TEXTURE_2D, cubeLocations["rubiksTexture"]);
+//     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+//     gl.generateMipmap(gl.TEXTURE_2D);
+//     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+//     gl.texParameteri(
+//       gl.TEXTURE_2D,
+//       gl.TEXTURE_MIN_FILTER,
+//       gl.LINEAR_MIPMAP_LINEAR
+//     );
+//   };
+// }
