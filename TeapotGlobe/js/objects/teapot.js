@@ -1,10 +1,3 @@
-/**
- * teapot.js
- *
- * @fileoverview Manages buffers, arrays, and other data related to teapot.
- * @author Po-Han Huang <phuang17@illinois.edu>
- */
-
 /** Identification prefix for teapot shader. */
 var TEAPOT_PREFIX = "teapot";
 
@@ -32,7 +25,7 @@ var teapotAngle = degToRad(200);
 /** Quaternion of teapot's rotation. */
 var teapotQuat = quat.create();
 /** Rotation speed of teapot */
-var teapotAngleStep = degToRad(-0.5);
+var teapotAngleStep = degToRad(0);
 
 /** Model-to-World scale of teapot */
 var TEAPOT_SCALE = vec3.fromValues(0.1, 0.1, 0.1);
@@ -43,7 +36,7 @@ var TEAPOT_TRANSLATION = vec3.fromValues(0.0, -0.2, 0.0);
 var lightEnable = 1.0;
 var normalEnable = 1.0;
 var reflectionEnable = 1.0;
-var bumpiness = 25.0;
+var bumpiness = 0.0;
 
 /** Lighting parameters */
 /** Parallel light source */

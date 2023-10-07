@@ -47,18 +47,7 @@ function tick() {
  *  @return {glContext}
  */
 function createGLContext(canvas) {
-  var names = ["webgl", "experimental-webgl"];
-  var context = null;
-  for (var i = 0; i < names.length; i++) {
-    try {
-      context = canvas.getContext(names[i]);
-      /** For debugging only */
-      // context = WebGLDebugUtils.makeDebugContext(canvas.getContext(names[i]));
-    } catch (e) {}
-    if (context) {
-      break;
-    }
-  }
+  context = canvas.getContext("webgl2");
   if (context) {
     context.viewportWidth = canvas.width;
     context.viewportHeight = canvas.height;
@@ -70,6 +59,7 @@ function createGLContext(canvas) {
 
 /** Setup all shaders. */
 function setupShaders() {
+  console.log(shaderInit);
   for (prefix in shaders) {
     setupOneShader(shaders[prefix]);
     shaderInit[prefix]();
@@ -173,4 +163,5 @@ function initAll() {
   viewInit();
   skyboxInit();
   teapotInit();
+  sphereInit();
 }
