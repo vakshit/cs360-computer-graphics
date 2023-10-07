@@ -87,7 +87,7 @@ function sphereInit() {
 
   /** Initialize sphere and normal map. */
   sphereGenerateShape();
-  setupTextureMap();
+  setupSphereTextureMap();
 }
 
 /** Initialize sphere's shader programs and variable locations. */
@@ -118,10 +118,6 @@ function sphereShaderInit() {
     "uModelMatrix"
   );
   sphereLocations["uEnv"] = gl.getUniformLocation(sphereShaderProgram, "uEnv");
-  sphereLocations["uReflectionEnable"] = gl.getUniformLocation(
-    sphereShaderProgram,
-    "uReflectionEnable"
-  );
 
   sphereLocations["uViewOrigin"] = gl.getUniformLocation(
     sphereShaderProgram,
@@ -264,8 +260,6 @@ function sphereDraw() {
     gl.uniform3fv(sphereLocations["uSpecularLight"], specular_light);
     gl.uniform3fv(sphereLocations["vVertexColor"], SPHERE_COLOR);
 
-    gl.activeTexture(gl.TEXTURE1);
-    gl.bindTexture(gl.TEXTURE_2D, sphereLocations["texture"]);
     gl.uniform1i(sphereLocations["uTextureLocation"], 1); // Use texture unit 1
 
     gl.drawElements(
@@ -341,7 +335,7 @@ var nslices = 50;
 var nstacks = 50;
 var radius = 1.0;
 /** Setup normal map. */
-function setupTextureMap() {
+function setupSphereTextureMap() {
   /** Set up texture. */
   sphereLocations["texture"] = gl.createTexture();
   gl.activeTexture(gl.TEXTURE1);
@@ -358,8 +352,5 @@ function setupTextureMap() {
       gl.TEXTURE_MIN_FILTER,
       gl.LINEAR_MIPMAP_LINEAR
     );
-    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
   };
 }

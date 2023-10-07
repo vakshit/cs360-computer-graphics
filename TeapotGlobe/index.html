@@ -14,6 +14,7 @@
   <script type="text/javascript" src="js/objects/sphere.js"></script>
   <script type="text/javascript" src="js/objects/teapot.js"></script>
   <script type="text/javascript" src="js/objects/rubiks.js"></script>
+  <script type="text/javascript" src="js/objects/cube.js"></script>
 
 </head>
 
@@ -33,14 +34,7 @@
         oninput="setCameraSpeed(this.value);">
       <span id="camera_speed_value">0.2</span>
     </p>
-    <p>Teapot rotation speed:
-      <input type="checkbox" onclick="toggleTeapotSpeed(this.checked);" checked>On/Off</input>
-      <input id="teapot_speed_range" type="range" name="points" min="-1.0" max="1.0" value="-0.5" step="0.01"
-        oninput="setTeapotSpeed(this.value);">
-      <span id="teapot_speed_value">-0.5</span>
-    </p>
 
-    <p><input type="checkbox" onclick="toggleLight(this.checked);" checked>Light</input></p>
     <p><input type="checkbox" onclick="toggleReflection(this.checked);" checked>Reflection</input></p>
     <p><input type="checkbox" onclick="toggleNormal(this.checked);" checked>Normal Mapping</input></p>
   </div>
@@ -57,11 +51,6 @@
     function toggleCameraSpeed(status) {
       setCameraSpeed(status ? document.getElementById("camera_speed_range").value : 0);
       document.getElementById("camera_speed_range").disabled = !status;
-    }
-
-    /** Enable/disable light. */
-    function toggleLight(status) {
-      lightEnable = status ? 1.0 : 0.0;
     }
 
     /** Enable/disable environment reflection. */

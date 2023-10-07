@@ -149,4 +149,5 @@ function initAll() {
   teapotInit();
   sphereInit();
   rubiksInit();
+  cubeInit();
 }

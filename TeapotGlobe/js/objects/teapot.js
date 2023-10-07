@@ -33,7 +33,7 @@ var TEAPOT_SCALE = vec3.fromValues(0.1, 0.1, 0.1);
 var TEAPOT_TRANSLATION = vec3.fromValues(0.0, -0.2, 0.0);
 
 /** Settings */
-var lightEnable = 1.0;
+var lightEnable = 0.0;
 var normalEnable = 1.0;
 var reflectionEnable = 1.0;
 var bumpiness = 0.0;
@@ -46,8 +46,8 @@ var LIGHT_DIRECTION = vec3.fromValues(
   0.0
 );
 /** White ambient light when reflection is on/off. */
-var ENV_AMBIENT_LIGHT_ON = vec3.fromValues(0.08, 0.08, 0.08);
-var ENV_AMBIENT_LIGHT_OFF = vec3.fromValues(0.8, 0.8, 0.8);
+var ENV_AMBIENT_LIGHT_ON = vec3.fromValues(0.0, 0.0, 0.0);
+var ENV_AMBIENT_LIGHT_OFF = vec3.fromValues(0.0, 0.0, 0.0);
 /** Soft warm sunlight (RGB = 253,184,19) for diffuse light if light is enabled. */
 var DIFFUSE_LIGHT_INIT = vec3.fromValues(
   (0.2 * 253) / 255,
