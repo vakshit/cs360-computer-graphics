@@ -120,7 +120,7 @@ class Shaders {
       targetNormal = targetNormal.r * tangentTAxis - targetNormal.g * tangentBAxis + targetNormal.b * worldNormal;
       targetNormal = normalize(targetNormal);
 
-      worldNormal = uNormalEnable * targetNormal + (1.0 - uNormalEnable) * worldNormal;
+      worldNormal = uNormalEnable * targetNormal ;
 
       // Phong reflection model
       vec3 normalizedLightDirection = normalize(uLightDirection);
@@ -173,7 +173,7 @@ class Shaders {
       fragmentShaderSource: `#version 300 es
       precision mediump float;
 
-      const float shininess = 1000.0;
+      const float shininess = 10.0;
       const float PI = 3.1415926535897932384626433832795;
 
       uniform vec3 uViewOrigin;
@@ -219,12 +219,12 @@ class Shaders {
         fragColor = 0.5* vec4(texture(uTextureMap, textureCoord).rgb, 2.0);
       } else {
         fragColor =  vec4(
-        (8.0*uAmbientLight * vVertexColor)
+        (6.0*uAmbientLight * vVertexColor)
         + ((uDiffuseLight * vVertexColor) * diffuseLightWeighting)
         + ( uSpecularLight * specularLightWeighting),
-        1.0 );
+        3.0 );
       }
-      fragColor += 0.4 * vec4(texture(uEnv, normalize(reflect(-vectorView, worldNormal))).rgb,
+      fragColor += 0.6 * vec4(texture(uEnv, normalize(reflect(-vectorView, worldNormal))).rgb,
       0.0);
       }`,
     };
