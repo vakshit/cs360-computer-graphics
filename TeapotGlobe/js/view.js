@@ -48,7 +48,7 @@ function viewUpdateMatrix() {
   /** Update up and lookAt vector based on current angle. */
   viewOrigin = vec3.fromValues(
     VIEW_RADIUS * Math.cos(viewAngle),
-    0.6,
+    0.8,
     VIEW_RADIUS * Math.sin(viewAngle)
   );
   viewLookAt = vec3.fromValues(-Math.cos(viewAngle), 0.0, -Math.sin(viewAngle));

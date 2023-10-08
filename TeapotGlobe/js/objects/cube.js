@@ -332,23 +332,3 @@ function setupRubiksTextureMap() {
     });
   };
 }
-
-// function setupRubiksTextureMap() {
-//   /** Set up texture. */
-//   cubeLocations["rubiksTexture"] = gl.createTexture();
-//   gl.activeTexture(gl.TEXTURE2);
-//   var image = new Image();
-//   image.src = "wood.jpg";
-//   image.onload = function () {
-//     gl.activeTexture(gl.TEXTURE2);
-//     gl.bindTexture(gl.TEXTURE_2D, cubeLocations["rubiksTexture"]);
-//     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
-//     gl.generateMipmap(gl.TEXTURE_2D);
-//     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-//     gl.texParameteri(
-//       gl.TEXTURE_2D,
-//       gl.TEXTURE_MIN_FILTER,
-//       gl.LINEAR_MIPMAP_LINEAR
-//     );
-//   };
-// }

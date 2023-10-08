@@ -34,14 +34,14 @@ const spheres = [
     texture: 0.0,
   },
   {
-    color: vec3.fromValues(52 / 255, 66 / 255, 125 / 255),
+    color: vec3.fromValues(2 / 255, 53 / 255, 177 / 255),
     scale: vec3.fromValues(0.06, 0.06, 0.06),
     translate: vec3.fromValues(-0.3, -0.1, -0.25),
     texture: 0.0,
   },
   {
     color: vec3.fromValues(52 / 255, 66 / 255, 125 / 255),
-    scale: vec3.fromValues(0.8, 0.01, 0.6),
+    scale: vec3.fromValues(0.8, 0.05, 0.6),
     translate: vec3.fromValues(0.0, -0.3, 0.0),
     texture: 1.0,
   },
