@@ -4,47 +4,47 @@ class Shaders {
     this.skybox = {
       name: "skybox",
 
-      vertexShaderSource: `
-      attribute vec3 aVertexPosition;
+      vertexShaderSource: `#version 300 es
+      in vec3 aVertexPosition;
 
       uniform mat4 uPMatrix;
       uniform mat4 uMVMatrix;
 
-      varying vec3 vPosition;
+      out vec3 vPosition;
 
       void main(void) {
       gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
       vPosition= aVertexPosition;
       }`,
 
-      fragmentShaderSource: `
+      fragmentShaderSource: `#version 300 es
       precision mediump float;
 
       uniform samplerCube uEnv;
 
-      varying vec3 vPosition;
-
+      in vec3 vPosition;
+      out vec4 fragColor;
       void main(void) {
-      gl_FragColor = textureCube(uEnv, normalize(vPosition));
+      fragColor = texture(uEnv, normalize(vPosition));
       }`,
     };
 
     this.teapot = {
       name: "teapot",
 
-      vertexShaderSource: `
-      attribute vec3 aVertexPosition;
-      attribute vec3 aVertexNormal;
+      vertexShaderSource: `#version 300 es
+      in vec3 aVertexPosition;
+      in vec3 aVertexNormal;
 
       uniform mat4 uPMatrix;
       uniform mat4 uMVMatrix;
       uniform mat4 uModelMatrix;
 
-      varying vec3 vModelPosition;
-      varying vec3 vModelNormal;
-      varying vec3 vWorldPosition;
-      varying vec3 vWorldNormal;
-      varying vec3 vVertexColor;
+      out vec3 vModelPosition;
+      out vec3 vModelNormal;
+      out vec3 vWorldPosition;
+      out vec3 vWorldNormal;
+      out vec3 vVertexColor;
 
       void main(void) {
 
@@ -60,7 +60,7 @@ class Shaders {
       gl_Position = uPMatrix * uMVMatrix * worldPosition;
       }`,
 
-      fragmentShaderSource: `
+      fragmentShaderSource: `#version 300 es
       precision mediump float;
 
       const float shininess = 1000.0;
@@ -74,12 +74,12 @@ class Shaders {
 
       uniform samplerCube uEnv;
 
-      varying vec3 vModelPosition;
-      varying vec3 vModelNormal;
-      varying vec3 vWorldPosition;
-      varying vec3 vWorldNormal;
-      varying vec3 vVertexColor;
-
+      in vec3 vModelPosition;
+      in vec3 vModelNormal;
+      in vec3 vWorldPosition;
+      in vec3 vWorldNormal;
+      in vec3 vVertexColor;
+      out vec4 fragColor;
       void main(void) {
 
       vec3 worldPosition = vWorldPosition;
@@ -109,12 +109,12 @@ class Shaders {
       float specularLightWeighting = pow( max( dot(vectorReflection, vectorView), 0.0), shininess );
 
       // Sum up lighting and reflection parts
-      gl_FragColor = vec4(
+      fragColor = vec4(
       ( uAmbientLight * vVertexColor)
       + ((uDiffuseLight * vVertexColor) * diffuseLightWeighting)
       + ( uSpecularLight * specularLightWeighting),
       1.0 );
-      gl_FragColor += vec4(textureCube(uEnv, normalize(reflect(-vectorView, worldNormal))).rgb ,
+      fragColor += vec4(texture(uEnv, normalize(reflect(-vectorView, worldNormal))).rgb ,
       0.0);
       }`,
     };
@@ -308,7 +308,7 @@ class Shaders {
         1.0 );
 
         // add reflection
-        fragColor += 0.4 * vec4(texture(uEnv, normalize(refract(-vectorView, worldNormal, 0.82))).rgb,
+        fragColor += 0.8 * vec4(texture(uEnv, normalize(refract(-vectorView, worldNormal, 0.82))).rgb,
         0.0);
       }
       // always reflects
@@ -1205,7 +1205,7 @@ var LIGHT_DIRECTION = vec3.fromValues(
 );
 var ENV_AMBIENT_LIGHT_ON = vec3.fromValues(0.08, 0.08, 0.08);
 var ENV_AMBIENT_LIGHT_OFF = vec3.fromValues(0.8, 0.8, 0.8);
-var CUBE_COLOR = vec3.fromValues(194 / 255, 187 / 255, 169 / 255);
+var CUBE_COLOR = vec3.fromValues(207 / 255, 207 / 255, 207 / 255);
 var DIFFUSE_LIGHT_INIT = vec3.clone(CUBE_COLOR);
 var SPECULAR_LIGHT_INIT = vec3.fromValues(1.0, 1.0, 1.0);
 
