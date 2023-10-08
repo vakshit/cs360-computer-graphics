@@ -874,7 +874,6 @@ function teapotSetPositionAndIndex() {
     var data = JSON.parse(request.responseText);
     teapotPositionArray = data["vertexPositions"];
     teapotIndexArray = data["indices"];
-    console.log(data);
   } else {
     console.error("Failed to fetch JSON file");
   }
