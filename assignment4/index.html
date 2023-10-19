@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+  <title>WebGL 2D Animation</title>
+  <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1" />
+  <script type="text/javascript" src="glMatrix.js"></script>
+  <script type="text/javascript" src="main.js"></script>
+  <script type="text/javascript" src="utils.js"></script>
+</head>
+
+<body onload="webGLStart();">
+  <div>
+    <canvas id="canvas" style="border: none; display: block;" width="500" height="500"></canvas>
+    <p style="display: inline;">Select Background image</p>
+    <input type="file" id="background" accept="image/*" onchange="loadImage(event, 0)">
+    <br />
+    <br />
+    <p style="display: inline;">Select Foreground image</p>
+    <input type="file" id="foreground" accept="image/*" onchange="loadImage(event, 1)">
+    <br>
+    <h4 style="display: inline;">Image Mode</h4>
+    <input type="radio" id="backgroundCheck"> Background Only
+    <input type="radio" id="alphaCheck"> Alpha Blended
+    <br>
+    <input type="checkbox" id="grayScale"> GrayScale
+    <input type="checkbox" id="sepiaCheck"> sepia
+    <br>
+    <label for="slider">contrast</label>
+    <input type="range" id="contrast" name="slider" min="-0.5" max="0.5" step="0.01" value="0" style="width: 200px">
+    <br>
+    <label for="slider">brightness</label>
+    <input type="range" id="brightness" name="slider" min="-0.5" max="0.5" step="0.01" value="0" style="width: 200px">
+    <br>
+    <h4 style="margin: 0px;">Process Background Image:</h4>
+    <label for="gradient">Gradient</label>
+    <input type="checkbox" id="gradient">
+    <label for="smooth">Smooth</label>
+    <input type="checkbox" id="smooth">
+
+    <label for="sharpen">Sharpen</label>
+    <input type="checkbox" id="Sharpen">
+
+    <label for="laplacian">Laplacian</label>
+    <input type="checkbox" id="laplacian">
+  </div>
+</body>
+
+</html>
