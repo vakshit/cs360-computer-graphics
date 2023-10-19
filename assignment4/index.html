@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html>
 
 <head>
@@ -8,42 +7,66 @@
   <script type="text/javascript" src="glMatrix.js"></script>
   <script type="text/javascript" src="main.js"></script>
   <script type="text/javascript" src="utils.js"></script>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 10px;
+    }
+
+    .container {
+      border: 2px solid #000;
+      padding: 10px;
+      background-color: #e3ffed;
+      border-radius: 5px;
+    }
+
+    canvas {
+      border: 2px solid #000;
+      border-radius: 5px;
+      display: block;
+      margin: 10px 0;
+    }
+  </style>
 </head>
 
 <body onload="webGLStart();">
-  <div>
-    <canvas id="canvas" style="border: none; display: block;" width="500" height="500"></canvas>
+  <div class="container">
+    <canvas id="canvas" width="500" height="500"></canvas>
     <p style="display: inline;">Select Background image</p>
     <input type="file" id="background" accept="image/*" onchange="loadImage(event, 0)">
     <br />
     <br />
     <p style="display: inline;">Select Foreground image</p>
     <input type="file" id="foreground" accept="image/*" onchange="loadImage(event, 1)">
-    <br>
+    <hr> <!-- Line separator -->
     <h4 style="display: inline;">Image Mode</h4>
-    <input type="radio" id="backgroundCheck"> Background Only
-    <input type="radio" id="alphaCheck"> Alpha Blended
+    <input type="radio" name="imageMode" id="backgroundButton" onclick="background = 0.0; drawScene();"> Background Only
+    <input type="radio" name="imageMode" id="blendButton" onclick="setEffects(); background = 1.0; drawScene();"> Alpha
+    Blended
+    <hr> <!-- Line separator -->
+    <input type="radio" name="effects" id="none" onclick="setEffects(); drawScene()" checked> Original
+    <input type="radio" name="effects" id="grayScale" onclick="setEffects('grayscale'); drawScene()"> GrayScale
+    <input type="radio" name="effects" id="sepiaCheck" onclick="setEffects('sepia'); drawScene()"> Sepia
     <br>
-    <input type="checkbox" id="grayScale"> GrayScale
-    <input type="checkbox" id="sepiaCheck"> sepia
+    <label for="slider">Contrast: &nbsp;&nbsp;&nbsp;</label>
+    <input type="range" id="contrast" name="slider" min="-0.5" max="0.5" step="0.01" value="0" style="width: 200px"
+      oninput="contrast = parseFloat(this.value); drawScene()">
     <br>
-    <label for="slider">contrast</label>
-    <input type="range" id="contrast" name="slider" min="-0.5" max="0.5" step="0.01" value="0" style="width: 200px">
-    <br>
-    <label for="slider">brightness</label>
-    <input type="range" id="brightness" name="slider" min="-0.5" max="0.5" step="0.01" value="0" style="width: 200px">
-    <br>
-    <h4 style="margin: 0px;">Process Background Image:</h4>
-    <label for="gradient">Gradient</label>
-    <input type="checkbox" id="gradient">
-    <label for="smooth">Smooth</label>
-    <input type="checkbox" id="smooth">
+    <label for="slider">Brightness: </label>
+    <input type="range" id="brightness" name="slider" min="-0.5" max="0.5" step="0.01" value="0" style="width: 200px"
+      oninput="brightness = parseFloat(this.value); drawScene()">
+    <hr> <!-- Line separator -->
+    <h4 style="margin: 5px;">Process Background Image:</h4>
+    <input type="radio" name="effects" id="smooth" onclick="setEffects('smooth'); drawScene();"> Smooth
+    <input type="radio" name="effects" id="gradient" onclick="setEffects('gradient'); drawScene();"> Gradient
+    <input type="radio" name="effects" id="Sharpen" onclick="setEffects('sharpen'); drawScene();"> Sharpen
+    <input type="radio" name="effects" id="laplacian" onclick="setEffects('laplacian'); drawScene();"> Laplacian
+    <hr />
+    <input type="button" value="Reset" onclick="setEffects(); document.getElementById('backgroundButton').click();">
+    <input type="button" value="Save Screenshot" onclick="downloadImage()">
 
-    <label for="sharpen">Sharpen</label>
-    <input type="checkbox" id="Sharpen">
-
-    <label for="laplacian">Laplacian</label>
-    <input type="checkbox" id="laplacian">
   </div>
 </body>
 
