@@ -7,6 +7,7 @@ class RayTracer {
     this.canvas = canvas;
     /** @type {WebGLRenderingContext} */
     this.gl = this.initWebGL();
+    this.resizeCanvas();
     /** @type {Shaders} */
     this.shaders = new Shaders(this.gl);
     this.initShaders();
@@ -37,8 +38,6 @@ class RayTracer {
    * Reset the canvas height
    */
   resizeCanvas() {
-    // fix weird height glitch
-    var scale = RayTracer.isRetina() ? 2.0 : 1.0;
     this.canvas.height = 812;
     this.canvas.width = 800;
     this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
@@ -91,7 +90,7 @@ class RayTracer {
 
     this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
     this.gl.clearDepth(1.0);
-    this.resizeCanvas();
+    // this.resizeCanvas();
     this.initBuffers();
   }
 
@@ -136,33 +135,38 @@ class RayTracer {
    * @param time
    */
   render(numberOfSpheres, reflectionDepth, zoom, shadows, time) {
-    this.resizeCanvas();
-
+    // this.resizeCanvas();
+    time = 1;
     // layout spheres in a cube-like shape
     var spheres = [];
     var cubeSize = Math.floor(Math.cbrt(numberOfSpheres));
     var squareSize = Math.pow(cubeSize, 2);
 
-    for (let i = 0.0; i < numberOfSpheres; i++) {
-      let v = i % squareSize;
-      spheres.push(
-        new Vector(
-          3 * (v % cubeSize) + Math.sin(time + i) * 0.15 - (3 * cubeSize) / 2,
-          3 * Math.floor(v / cubeSize) + Math.sin(time + i) * 0.15,
-          3 * Math.floor(i / squareSize) +
-            Math.sin(time + i) * 0.15 -
-            (3 * cubeSize) / 2
-        )
-      );
-    }
+    // for (let i = 0.0; i < numberOfSpheres; i++) {
+    //   let v = i % squareSize;
+    //   spheres.push(
+    //     new Vector(
+    //       3 * (v % cubeSize) + Math.sin(time + i) * 0.15 - (3 * cubeSize) / 2,
+    //       3 * Math.floor(v / cubeSize) + Math.sin(time + i) * 0.15,
+    //       3 * Math.floor(i / squareSize) +
+    //         Math.sin(time + i) * 0.15 -
+    //         (3 * cubeSize) / 2
+    //     )
+    //   );
+    // }
+
+    spheres.push(new Vector(0.0, -1.0, -3.0));
+    spheres.push(new Vector(1.5, -1.0, 0.0));
+    spheres.push(new Vector(-1.5, -1.0, 0.0));
 
     var up = new Vector(0, 1, 0);
     var cameraTo = new Vector(0, 0, 0);
-    var cameraFrom = new Vector(
-      Math.sin(time * 0.08) * 18,
-      Math.sin(time * 0.026) * 5 + 5,
-      Math.cos(time * 0.08) * 18
-    );
+    // var cameraFrom = new Vector(
+    //   Math.sin(time * 0.08) * 18,
+    //   Math.sin(time * 0.026) * 5 + 5,
+    //   Math.cos(time * 0.08) * 18
+    // );
+    var cameraFrom = new Vector(0.0, 3.0, 20.0);
     var cameraDirection = cameraTo.subtract(cameraFrom).normalize();
 
     // work out screen corners

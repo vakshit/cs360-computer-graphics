@@ -10,11 +10,10 @@ class Shaders {
     void main(void) {
       gl_Position = vec4(aVertexPosition, 1.0, 1.0);
       vPosition = aPlotPosition;
-      gl_PointSize = 1.0;
     }
     `;
     this.fragmentShader = `
-    precision highp float;
+    precision mediump float;
     varying vec3 vPosition;
     uniform vec3 cameraPosition;
     uniform int reflections;  // max = 10
@@ -105,9 +104,9 @@ class Shaders {
 
         // TODO: check if testing for shadows here is valid...
         if (!shadows || !intersectSpheresSimple(position, light)) {
-          intensity = intensity + 0.05 + 0.3 * pow(max(dot(reflection, viewer), 0.0), 30.0) + 0.7 * dot(light, normal);
+          intensity = intensity + 0.3 + 0.3 * pow(max(dot(reflection, viewer), 0.0), 30.0) + 0.7 * dot(light, normal);
         } else {
-          intensity = intensity + 0.05;
+          intensity = intensity + 0.3;
         }
       }
 
@@ -145,6 +144,7 @@ class Shaders {
         } else {
           color = vec3(0.0, 0.45, 0.4);
         }
+        // color = vec3(0.8);
       } else {
       return false;
       }
@@ -156,8 +156,8 @@ class Shaders {
       vec3 cameraDirection = normalize(vPosition - cameraPosition);
 
       lightDirections[0] = normalize(vec3(0.577350269, 0.577350269, -0.577350269));
-      lightDirections[1] = normalize(vec3(0.577350269, 0.577350269, -0.577350269));
-      lightDirections[2] = normalize(vec3(0.5, 1.0, 1.0));
+      // lightDirections[1] = normalize(vec3(0.577350269, 0.577350269, -0.577350269));
+      // lightDirections[2] = normalize(vec3(0.5, 1.0, 1.0));
 
       // start pos, normal, end pos
       vec3 position1, normal, position2;
@@ -221,76 +221,44 @@ class Controls {
     this.screen = document.querySelector(screenSelector);
     this.canvas = this.screen.querySelector("canvas.render");
     this.controls = document.querySelector(controlsSelector);
-
-    try {
-      this.rayTracer = new RayTracer(this.canvas);
-    } catch (e) {
-      this.screen.querySelector(".error.dimmer").classList.add("active");
-      throw e;
-    } finally {
-      this.screen.querySelector(".loading.dimmer").classList.remove("active");
-      this.screen.querySelector(".loaded.dimmer").classList.add("active");
-    }
-
-    this.controls
-      .querySelector("button.render")
-      .addEventListener("click", this.render.bind(this));
-    this.controls
-      .querySelector("button.profile")
-      .addEventListener("click", this.profile.bind(this));
+    this.rayTracer = new RayTracer(this.canvas);
 
     this.simulationTime = 0.0;
-  }
-
-  profile() {
-    let dimmer = this.controls.querySelector(".profiling.dimmer");
-    dimmer.classList.add("active");
-    setTimeout(() => dimmer.classList.remove("active"), 2000);
+    this.render();
   }
 
   render() {
-    if (!this.interval) {
-      this.controls.querySelector("button.render").innerHTML =
-        'Pause <i class="pause icon"></i>';
+    this.screen.querySelector(".loaded.dimmer").classList.remove("active");
 
-      let timeDisplay = this.controls.querySelector("span.render-time");
-      this.screen.querySelector(".loaded.dimmer").classList.remove("active");
-
-      setTimeout(() => {
-        try {
-          this.interval = true;
-          let startTime, endTime;
-          startTime = endTime = new Date().getTime();
-          const step = () => {
-            if (this.interval) {
-              startTime = new Date().getTime();
-              this.simulationTime += (startTime - endTime) / 100;
-              this.rayTracer.render(
-                this.setting("spheres"),
-                this.setting("reflections"),
-                this.setting("zoom"),
-                this.checkbox("shadows"),
-                this.simulationTime
-              );
-              endTime = new Date().getTime();
-              timeDisplay.innerHTML = endTime - startTime + "ms";
-              requestAnimationFrame(step);
-            }
-          };
+    // setTimeout(() => {
+    try {
+      this.interval = true;
+      let startTime, endTime;
+      startTime = endTime = new Date().getTime();
+      const step = () => {
+        if (this.interval) {
+          startTime = new Date().getTime();
+          this.simulationTime += (startTime - endTime) / 100;
+          this.rayTracer.render(
+            this.setting("spheres"),
+            this.setting("reflections"),
+            this.setting("zoom"),
+            this.checkbox("shadows"),
+            this.simulationTime
+          );
+          endTime = new Date().getTime();
           requestAnimationFrame(step);
-        } catch (error) {
-          console.error(error);
-          let errorDimmer = this.screen.querySelector(".error.dimmer");
-          errorDimmer.classList.add("active");
-          errorDimmer.querySelector("p").innerHTML = error.message;
         }
-      }, 1);
-    } else {
-      clearInterval(this.interval);
-      this.interval = null;
-      this.controls.querySelector("button.render").innerHTML =
-        'Render <i class="play icon"></i>';
+      };
+      step();
+      // requestAnimationFrame(step);
+    } catch (error) {
+      console.error(error);
+      let errorDimmer = this.screen.querySelector(".error.dimmer");
+      errorDimmer.classList.add("active");
+      errorDimmer.querySelector("p").innerHTML = error.message;
     }
+    // }, 1);
   }
 
   setting(name) {
@@ -301,15 +269,6 @@ class Controls {
     return this.controls.querySelector("#" + name).checked;
   }
 }
-
-document.addEventListener("DOMContentLoaded", function () {
-  console.log("Initialising app...");
-
-  // Initialize checkboxes
-  var checkboxes = document.querySelectorAll(".ui.checkbox");
-
-  // Assuming Controls is defined elsewhere and doesn't rely on jQuery
-});
 
 document.addEventListener("DOMContentLoaded", function () {
   /**
