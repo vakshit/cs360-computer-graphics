@@ -7,7 +7,7 @@ uniform int numberOfSpheres;  // max = 64
 uniform vec3 sphereCenters[64];
 vec3 lightDirections[3];
 
-    /**
+    /** 
      * Check for an intersection with a sphere
      */
 bool intersectSphere(vec3 sphereCenter, vec3 rayStart, vec3 rayDirection, out float distance) {

@@ -279,6 +279,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var element = e.target;
     var parent = element.parentElement;
     parent.querySelector(".value").textContent = element.value;
+    // Controls.render();
   }
 
   var ranges = document.querySelectorAll('input[type="range"]');
@@ -290,5 +291,5 @@ document.addEventListener("DOMContentLoaded", function () {
     // Trigger the event manually for initialization
     showValue({ target: range });
   });
-  new Controls("#screen", "#controls");
+  const controls = new Controls("#screen", "#controls");
 });
