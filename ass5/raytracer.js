@@ -36,16 +36,13 @@ class RayTracer {
   /**
    * Reset the canvas height
    */
-  // resizeCanvas() {
-  //   // fix weird height glitch
-  //   var scale = RayTracer.isRetina() ? 2 : 1;
-  //   this.gl.viewport(
-  //     0,
-  //     0,
-  //     this.canvas.width * scale,
-  //     this.canvas.height * scale
-  //   );
-  // }
+  resizeCanvas() {
+    // fix weird height glitch
+    var scale = RayTracer.isRetina() ? 2.0 : 1.0;
+    this.canvas.height = 812;
+    this.canvas.width = 800;
+    this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+  }
 
   /**
    * Load and initialise the vertex and fragment shaders
@@ -94,7 +91,7 @@ class RayTracer {
 
     this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
     this.gl.clearDepth(1.0);
-    // this.resizeCanvas();
+    this.resizeCanvas();
     this.initBuffers();
   }
 
@@ -139,7 +136,7 @@ class RayTracer {
    * @param time
    */
   render(numberOfSpheres, reflectionDepth, zoom, shadows, time) {
-    // this.resizeCanvas();
+    this.resizeCanvas();
 
     // layout spheres in a cube-like shape
     var spheres = [];
@@ -206,7 +203,7 @@ class RayTracer {
 
     // load in our settings
     this.gl.uniform1i(this.reflectionDepth, reflectionDepth);
-    this.gl.uniform1i(this.shadows, true);
+    this.gl.uniform1i(this.shadows, shadows);
 
     // add camera position to scene
     this.gl.uniform3f(
@@ -224,14 +221,7 @@ class RayTracer {
     );
     this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
 
-    console.log(
-      "Rendered",
-      numberOfSpheres,
-      reflectionDepth,
-      zoom,
-      shadows,
-      time
-    );
+    console.log("Rendered", numberOfSpheres, reflectionDepth, zoom, shadows);
   }
 
   /**

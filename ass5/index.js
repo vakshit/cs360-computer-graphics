@@ -14,7 +14,7 @@ class Shaders {
     }
     `;
     this.fragmentShader = `
-    precision mediump float;
+    precision highp float;
     varying vec3 vPosition;
     uniform vec3 cameraPosition;
     uniform int reflections;  // max = 10
@@ -298,7 +298,7 @@ class Controls {
   }
 
   checkbox(name) {
-    return this.controls.querySelector("." + name + ".setting").checked;
+    return this.controls.querySelector("#" + name).checked;
   }
 }
 
@@ -307,19 +307,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Initialize checkboxes
   var checkboxes = document.querySelectorAll(".ui.checkbox");
-  checkboxes.forEach(function (checkbox) {
-    checkbox.addEventListener("click", function () {
-      this.classList.toggle("checked");
-    });
-  });
 
   // Assuming Controls is defined elsewhere and doesn't rely on jQuery
-  new Controls("#screen", "#controls");
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-  "use strict";
-
   /**
    * Show the text value for our HTML range elements in the label
    * @param e
@@ -339,4 +331,5 @@ document.addEventListener("DOMContentLoaded", function () {
     // Trigger the event manually for initialization
     showValue({ target: range });
   });
+  new Controls("#screen", "#controls");
 });
