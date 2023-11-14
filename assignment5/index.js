@@ -1,3 +1,16 @@
+/** @type {WebGL2RenderingContext} */
+var gl;
+/** @type {HTMLCanvasElement} */
+var canvas;
+var locations;
+var program;
+var vertexBuffer;
+var settings = {
+  mode: 0,
+  light: 0.0,
+  bounces: 2,
+};
+
 const shaderCode = {
   vertex: `#version 300 es
 
@@ -8,12 +21,11 @@ const shaderCode = {
     }
   `,
   fragment: `#version 300 es
-
+  precision mediump float;
+  
   #define NUM_SPHERES 4
   #define ROOT_3 1.73205080757
   #define INFINITY 100000.0
-  
-  precision mediump float;
   
   uniform float uLight;
   uniform int uMode;
@@ -35,39 +47,40 @@ const shaderCode = {
     vec3 direction;
   };
   
-  Sphere spheres[NUM_SPHERES] = Sphere[NUM_SPHERES](
-      Sphere(vec3(-ROOT_3, 0, -1), 0.8f, vec3(0.0f, 1.0f, 0.0f),
-             20.0),                                                    // Sphere 1
-      Sphere(vec3(0, 0, -2), 1.0f, vec3(1.0f, 0.0f, 0.0f), 10.0),      // Sphere 2
-      Sphere(vec3(ROOT_3, 0, -1), 0.8f, vec3(0.0f, 0.0f, 1.0f), 50.0), // Sphere 3
-      Sphere(vec3(0, -10, 0), 9.0f, vec3(1.0f, 1.0f, 1.0f), 100.0)     // Sphere 4
+  Sphere spheres[NUM_SPHERES] = Sphere[NUM_SPHERES](Sphere(vec3(-ROOT_3, 0, -1), 0.8f, vec3(0.0f, 1.0f, 0.0f), 20.0f), 
+    Sphere(vec3(0, 0, -2), 1.0f, vec3(1.0f, 0.0f, 0.0f), 10.0f), 
+    Sphere(vec3(ROOT_3, 0, -1), 0.8f, vec3(0.0f, 0.0f, 1.0f), 50.0f), 
+    Sphere(vec3(0, -10, 0), 9.0f, vec3(1.0f, 1.0f, 1.0f), 100.0f)
   );
   
-  // Function to solve the quadratic equation
   bool solveQuadratic(float a, float b, float c, out float t0, out float t1) {
-    float disc = b * b - 4. * a * c;
-    if (disc < 0.0) {
+    float disc = b * b - 4.f * a * c;
+    if(disc < 0.0f) {
       return false;
-    } else if (disc == 0.0) {
-      t0 = t1 = -0.5 * b / a;
+    } else if(disc == 0.0f) {
+      t0 = t1 = -0.5f * b / a;
       return true;
     }
-  
-    t0 = (-b + sqrt(disc)) / (2. * a);
-    t1 = (-b - sqrt(disc)) / (2. * a);
+    t0 = (-b + sqrt(disc)) / (2.f * a);
+    t1 = (-b - sqrt(disc)) / (2.f * a);
     return true;
   }
   
   // Function to calculate lighting for phong shading
-  vec3 calcLighting(vec3 normal, vec3 viewDir, vec3 lightDir, vec3 objectColor,
-                    float shininess) {
-    vec3 ambient = 0.6 * objectColor;
-    vec3 diffuse = 0.2 * objectColor * max(dot(normal, lightDir), 0.0);
+  vec3 calcLighting(
+    vec3 normal,
+    vec3 viewDir,
+    vec3 lightDir,
+    vec3 objectColor,
+    float shininess
+  ) {
+    vec3 ambient = 0.3f * objectColor;
+    vec3 diffuse = 0.3f * objectColor * max(dot(normal, lightDir), 0.0f);
     vec3 reflectDir = reflect(-lightDir, normal);
-    vec3 specular = 0.6 * vec3(1.0, 1.0, 1.0) *
-                    pow(max(dot(viewDir, reflectDir), 0.0), shininess);
+    vec3 specular = 0.6f * vec3(1.0f, 1.0f, 1.0f) *
+      pow(max(dot(viewDir, reflectDir), 0.0f), shininess);
   
-    if (objectColor == vec3(1.0)) {
+    if(objectColor == vec3(1.0f)) {
       return (ambient + diffuse);
     }
     return (ambient + diffuse + specular);
@@ -76,23 +89,23 @@ const shaderCode = {
   // Function to perform ray-sphere intersection
   float trace(Ray ray, Sphere sphere, out vec3 normal) {
     float a = dot(ray.direction, ray.direction);
-    float b = 2.0 * dot(ray.direction, ray.origin - sphere.center);
+    float b = 2.0f * dot(ray.direction, ray.origin - sphere.center);
     float c = dot(ray.origin - sphere.center, ray.origin - sphere.center) -
-              sphere.radius * sphere.radius;
+      sphere.radius * sphere.radius;
     float t0, t1;
   
-    if (!solveQuadratic(a, b, c, t0, t1)) {
-      return -1.0;
+    if(!solveQuadratic(a, b, c, t0, t1)) {
+      return -1.0f;
     }
-    if (t0 > t1) {
+    if(t0 > t1) {
       float temp = t0;
       t0 = t1;
       t1 = temp;
     }
-    if (t0 < 0.0) {
+    if(t0 < 0.0f) {
       t0 = t1;
-      if (t0 < 0.0) {
-        return -1.0;
+      if(t0 < 0.0f) {
+        return -1.0f;
       }
     }
   
@@ -104,9 +117,9 @@ const shaderCode = {
   
   bool inShadow(vec3 intersectionPoint, vec3 lightDir) {
     vec3 normal;
-    for (int i = 0; i < 4; ++i) {
+    for(int i = 0; i < 4; ++i) {
       float t = trace(Ray(intersectionPoint, lightDir), spheres[i], normal);
-      if (t > 0.1) {
+      if(t > 0.1f) {
         return true; // Point is in shadow
       }
     }
@@ -118,8 +131,8 @@ const shaderCode = {
   }
   
   Ray calculateColor(Ray ray, int depth, out vec3 outputColor) {
-    if (depth <= 0) {
-      outputColor = vec3(0.0); // Terminate recursion at a certain depth
+    if(depth <= 0) {
+      outputColor = vec3(0.0f); // Terminate recursion at a certain depth
       return ray;
     }
   
@@ -128,42 +141,42 @@ const shaderCode = {
     vec3 normal;
     vec3 closestNormal;
   
-    // Find the closest intersection
-    for (int i = 0; i < NUM_SPHERES; ++i) {
+      // Find the closest intersection
+    for(int i = 0; i < NUM_SPHERES; ++i) {
       float t = trace(ray, spheres[i], normal);
-      if (t > 0.0 && (closestIntersection < 1.0 || t < closestIntersection)) {
+      if(t > 0.0f && (closestIntersection < 1.0f || t < closestIntersection)) {
         closestIntersection = t;
         closestNormal = normal;
       }
     }
   
     closestIntersection = INFINITY;
-    for (int i = 0; i < NUM_SPHERES; ++i) {
+    for(int i = 0; i < NUM_SPHERES; ++i) {
       Sphere currentSphere = spheres[i];
   
       vec3 oc = ray.origin - currentSphere.center;
       float a = dot(ray.direction, ray.direction);
-      float b = 2.0 * dot(oc, ray.direction);
+      float b = 2.0f * dot(oc, ray.direction);
       float c = dot(oc, oc) - currentSphere.radius * currentSphere.radius;
-      float discriminant = b * b - 4.0 * a * c;
+      float discriminant = b * b - 4.0f * a * c;
   
-      if (discriminant >= 0.0) {
-        float t = (-b - sqrt(discriminant)) / (2.0 * a);
+      if(discriminant >= 0.0f) {
+        float t = (-b - sqrt(discriminant)) / (2.0f * a);
   
-        if (t > 0.001 && t < closestIntersection) {
+        if(t > 0.001f && t < closestIntersection) {
           closestIntersection = t;
           closestSphereIndex = i;
         }
       }
     }
   
-    if (closestSphereIndex == -1) {
-      outputColor = vec3(0.0); // No intersection, return background color
+    if(closestSphereIndex == -1) {
+      outputColor = vec3(0.0f); // No intersection, return background color
       return ray;
     }
   
-    // Calculate intersection point  
-
+      // Calculate intersection point  
+  
     vec3 intersectionPoint = ray.origin + ray.direction * closestIntersection;
     vec3 otherNormal = calculateNormal(intersectionPoint, closestSphereIndex);
   
@@ -172,14 +185,13 @@ const shaderCode = {
     vec3 viewDir = normalize(-ray.direction);
     vec3 point = ray.origin + closestIntersection * ray.direction;
     vec3 lightDir = normalize(initialLightDir - point);
-    vec3 neworigin = point + 0.0002 * normal;
+    vec3 neworigin = point + 0.0002f * normal;
     bool shadowed = inShadow(neworigin, lightDir);
   
-    vec3 phongColor =
-        calcLighting(closestNormal, viewDir, lightDir, color, shininess);
-    if (shadowed && depth == uBounces && closestSphereIndex == 3) {
-      if (uMode == 1 || uMode == 3){
-        phongColor -= vec3(0.2, 0.2, 0.2);
+    vec3 phongColor = calcLighting(closestNormal, viewDir, lightDir, color, shininess);
+    if(shadowed && depth == uBounces && closestSphereIndex == 3) {
+      if(uMode == 1 || uMode == 3) {
+        phongColor -= vec3(0.2f, 0.2f, 0.2f);
       }
     }
   
@@ -193,10 +205,10 @@ const shaderCode = {
   
   void main() {
     vec2 screenCoords = (gl_FragCoord.xy / vec2(500, 500)) * 2.0f - 1.0f;
-    initialLightDir = vec3(uLight, 5.0f, -3.0f);
+    initialLightDir = vec3(uLight, 3.0f, -1.0f);
   
     vec3 rayDirection = normalize(vec3(screenCoords, -1.0f));
-    vec3 rayOrigin = vec3(0.0f, 0.1f, 1.5);
+    vec3 rayOrigin = vec3(0.0f, 0.5f, 1.5f);
     Ray ray = Ray(rayOrigin, rayDirection);
   
     // Perform ray tracing with a loop for bounces
@@ -205,32 +217,19 @@ const shaderCode = {
     ray = calculateColor(ray, uBounces, finalColor);
     // finalColor = normalize(finalColor);
   
-    if (uMode > 1) {
-      for (int bounce = uBounces - 1; bounce > 0; --bounce) {
+    if(uMode > 1) {
+      for(int bounce = uBounces - 1; bounce > 0; --bounce) {
         ray = calculateColor(ray, bounce, tempColor);
-        // finalColor = normalize(0.2*finalColor + 0.6*tempColor);
-        // finalColor = normalize(finalColor);
-        if (tempColor != vec3(0.0)) {
-          finalColor = 0.6 * finalColor + 0.4 * tempColor;
+          // finalColor = normalize(0.2*finalColor + 0.6*tempColor);
+          // finalColor = normalize(finalColor);
+        if(tempColor != vec3(0.0f)) {
+          finalColor = 0.6f * finalColor + 0.4f * tempColor;
         }
       }
     }
   
-    fragColor = vec4(finalColor, 1.0);
+    fragColor = vec4(finalColor, 1.0f);
   }`,
-};
-
-/** @type {HTMLCanvasElement} */
-var canvas;
-/** @type {WebGL2RenderingContext} */
-var gl;
-var locations;
-var program;
-var vertexBuffer;
-var settings = {
-  mode: 0,
-  light: 0.0,
-  bounces: 2,
 };
 
 function initGL() {
