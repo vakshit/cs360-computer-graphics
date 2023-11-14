@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <script type="text/javascript" src="index.js"></script>
+
+  <title>Assignment 5</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .container {
+      border: 2px solid #000;
+      padding: 10px;
+      background-color: #d1fdfa;
+      border-radius: 5px;
+    }
+
+    canvas {
+      border: 2px solid #000;
+      border-radius: 5px;
+      display: block;
+      margin: 10px 0;
+    }
+
+    .button-radio {
+      display: inline-block;
+      background-color: #4CAF50;
+      /* Green background */
+      color: white;
+      /* White text */
+      padding: 5px 10px;
+      /* Some padding */
+      font-size: 16px;
+      /* Font size */
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      /* Rounded corners */
+      text-align: center;
+      margin: 2px;
+    }
+
+    .button-radio input[type="radio"] {
+      display: none;
+      /* Hide the default radio button */
+    }
+
+    .button-radio:hover {
+      background-color: #45a049;
+      /* Darker shade of green on hover */
+    }
+
+    .button-radio input[type="radio"]:checked+span {
+      background-color: #317d43;
+      /* Different background color when selected */
+    }
+  </style>
+</head>
+
+<body onload="webGLStart()" style="display: flex;justify-content: center;">
+  <div class="container">
+    <canvas width="500" height="500" id="canvas"></canvas>
+
+    <div style="padding-left: 5px;">
+      <h3>Shading Mode</h3>
+      <label class="button-radio">
+        <input id="mode-none" type="radio" name="mode" value="0" checked>
+        <span>Phong</span>
+      </label>
+
+      <label class="button-radio">
+        <input id="mode-shadow" type="radio" name="mode" value="0">
+        <span>Phong + Shadow</span>
+      </label>
+
+      <label class="button-radio">
+        <input id="mode-reflection" type="radio" name="mode" value="0">
+        <span>Phong + Reflection</span>
+      </label>
+      <br>
+      <label class="button-radio">
+        <input id="mode-both" type="radio" name="mode" value="0">
+        <span>Phong + Shadow + Reflection</span>
+      </label>
+
+      <br>
+      <br>
+      <label for="light">Move Light</label>
+      <input id="light" type="range" value="0" min="-1.0" max="1.0" step="0.01" style="width: 200px;" />
+      <br>
+      <label for="bounces">Bounce Limit</label>
+      <input id="bounces" type="range" value="2" min="2" max="6" step="1" style="width: 200px;" />
+    </div>
+  </div>
+</body>
+
+</html>
